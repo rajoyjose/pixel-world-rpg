@@ -465,16 +465,16 @@ window.selectClass = function (cls) {
   if (card) card.classList.add("selected");
 };
 
-window.playerAttack = function () {
+window.touchSprinting = false;
+window.doTouchAttack = function () {
   if (gameStarted && player) doAttack();
 };
-window.useAbility = function () {
-  if (gameStarted && player) useAbility();
+window.doTouchAbility = function () {
+  if (gameStarted && player) doAbility();
 };
-window.usePotion = function () {
-  if (gameStarted && player) usePotion();
+window.doTouchPotion = function () {
+  if (gameStarted && player) doPotion();
 };
-window.touchSprinting = false;
 
 // ================================
 // START BUTTON
@@ -880,13 +880,11 @@ function updateOnlineCount() {
 
 function sendPositionToFirebase() {
   if (!playersRef || !myPlayerId || !player) return;
-  playersRef
-    .child(myPlayerId)
-    .update({
-      x: Math.floor(player.x),
-      y: Math.floor(player.y),
-      dimension: currentDimension,
-    });
+  playersRef.child(myPlayerId).update({
+    x: Math.floor(player.x),
+    y: Math.floor(player.y),
+    dimension: currentDimension,
+  });
 }
 
 function addTombstoneVisual(x, y, name, level, color) {
@@ -1717,7 +1715,7 @@ function pickUpPotion(player, potion) {
   showFloatingText("💊 Potion!", player.x, player.y - 60, "#ff69b4");
 }
 
-function usePotion() {
+function doPotion() {
   var i = inventory.indexOf("Health Potion");
   if (i === -1) {
     showFloatingText("❌ No potions!", player.x, player.y - 60, "#ff0000");
@@ -1734,7 +1732,7 @@ function usePotion() {
 // ================================
 // ABILITIES
 // ================================
-function useAbility() {
+function doAbility() {
   var now = Date.now();
   if (now - abilityLastUsed < playerClass.abilityCooldown) {
     var rem = Math.ceil(
