@@ -657,21 +657,20 @@
       }
     </script>
     <script>
-      function selectClass(cls) {
-        window._selectedClass = cls;
-        document
-          .querySelectorAll(".classCard")
-          .forEach((c) => c.classList.remove("selected"));
-        var card = document.getElementById("card-" + cls);
-        if (card) card.classList.add("selected");
-      }
+            function selectClass(cls) {
+              window._selectedClass = cls;
+              document
+                .querySelectorAll(".classCard")
+                .forEach((c) => c.classList.remove("selected"));
+              var card = document.getElementById("card-" + cls);
+              if (card) card.classList.add("selected");
+            }
+         <!-- Firebase -->
+      <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
     </script>
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <script>
-      // YOUR Firebase config goes here!
       const firebaseConfig = {
         apiKey: "YOUR_API_KEY",
         authDomain: "YOUR_AUTH_DOMAIN",
@@ -681,11 +680,8 @@
         messagingSenderId: "YOUR_SENDER_ID",
         appId: "YOUR_APP_ID",
       };
-
-      // Start Firebase
       firebase.initializeApp(firebaseConfig);
-      const db = firebase.database();
-      console.log("Firebase connected!");
+      console.log("Firebase ready!");
     </script>
     <script src="src/game.js"></script>
   </body>
