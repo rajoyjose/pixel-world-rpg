@@ -666,6 +666,27 @@
         if (card) card.classList.add("selected");
       }
     </script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-database-compat.js"></script>
+
+    <script>
+      // YOUR Firebase config goes here!
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_AUTH_DOMAIN",
+        databaseURL: "YOUR_DATABASE_URL",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_STORAGE_BUCKET",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID",
+      };
+
+      // Start Firebase
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.database();
+      console.log("Firebase connected!");
+    </script>
     <script src="src/game.js"></script>
   </body>
 </html>

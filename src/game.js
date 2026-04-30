@@ -783,6 +783,7 @@ function startGame() {
   startBossTimer();
   startSurviveTimer();
   setupJoystick();
+  connectToServer();
 
   scene.physics.add.overlap(player, enemies, hitEnemy, null, scene);
   scene.physics.add.overlap(player, potions, pickUpPotion, null, scene);
@@ -2143,18 +2144,18 @@ function startSurviveTimer() {
 // TOMBSTONE
 // ================================
 function spawnTombstone(x, y) {
-  var stone = scene.add.image(x, y, "tombstoneTex").setDepth(7);
-  var label = scene.add
-    .text(x, y - 34, "💀 " + playerName + "\nLv." + playerLevel, {
-      fontSize: "10px",
-      fill: "#cccccc",
-      stroke: "#000",
-      strokeThickness: 2,
-      align: "center",
-    })
-    .setOrigin(0.5)
-    .setDepth(7);
-  tombstones.push({ stone: stone, label: label });
+  addTombstoneVisual(x, y, playerName, playerLevel, "#cccccc");
+  if (tombstonesRef && myPlayerId) {
+    tombstonesRef.push({
+      x: x,
+      y: y,
+      name: playerClass.icon + " " + playerName,
+      level: playerLevel,
+      dimension: currentDimension,
+      senderId: myPlayerId,
+      time: Date.now(),
+    });
+  }
 }
 
 // ================================
@@ -2367,6 +2368,151 @@ function showFloatingText(msg, x, y, color) {
     },
   });
 }
+// ================================
+// FIREBASE MULTIPLAYER
+// ================================
+var myPlayerId = null;
+var playersRef = null;
+var chatRef = null;
+var tombstonesRef = null;
+
+function connectToServer() {
+  try {
+    myPlayerId =
+      "player_" + Date.now() + "_" + Math.floor(Math.random() * 9999);
+
+    playersRef = firebase.database().ref("players");
+    chatRef = firebase.database().ref("chat");
+    tombstonesRef = firebase.database().ref("tombstones");
+
+    var myRef = playersRef.child(myPlayerId);
+    myRef.set({
+      id: myPlayerId,
+      name: playerClass.icon + " " + playerName,
+      x: 400,
+      y: 300,
+      level: playerLevel,
+      class: selectedClass,
+      dimension: 0,
+    });
+
+    myRef.onDisconnect().remove();
+
+    playersRef.on("child_added", function (snapshot) {
+      var data = snapshot.val();
+      if (!data || data.id === myPlayerId) return;
+      addOtherPlayerFirebase(data);
+      addChatMessage("System", data.name + " joined!", "#ffff44");
+      updateOnlineCount();
+    });
+
+    playersRef.on("child_changed", function (snapshot) {
+      var data = snapshot.val();
+      if (!data || data.id === myPlayerId) return;
+      if (otherPlayers[data.id]) {
+        otherPlayers[data.id].sprite.setPosition(data.x, data.y);
+        otherPlayers[data.id].nameTag.setPosition(data.x - 30, data.y - 52);
+      }
+    });
+
+    playersRef.on("child_removed", function (snapshot) {
+      var data = snapshot.val();
+      if (!data) return;
+      if (otherPlayers[data.id]) {
+        addChatMessage("System", data.name + " left", "#ff8888");
+        otherPlayers[data.id].sprite.destroy();
+        otherPlayers[data.id].nameTag.destroy();
+        delete otherPlayers[data.id];
+        updateOnlineCount();
+      }
+    });
+
+    chatRef.limitToLast(1).on("child_added", function (snapshot) {
+      var data = snapshot.val();
+      if (!data) return;
+      if (data.senderId !== myPlayerId) {
+        addChatMessage(data.name, data.message, "#ffffff");
+      }
+    });
+
+    tombstonesRef.once("value", function (snapshot) {
+      snapshot.forEach(function (child) {
+        var t = child.val();
+        if (t && t.dimension === currentDimension) {
+          addTombstoneVisual(t.x, t.y, t.name, t.level, "#ffaaaa");
+        }
+      });
+    });
+
+    tombstonesRef.on("child_added", function (snapshot) {
+      var t = snapshot.val();
+      if (!t) return;
+      if (t.senderId !== myPlayerId && t.dimension === currentDimension) {
+        addTombstoneVisual(t.x, t.y, t.name, t.level, "#ffaaaa");
+        addChatMessage("System", "💀 " + t.name + " fell!", "#ff8888");
+      }
+    });
+
+    addChatMessage("System", "🌐 Multiplayer connected!", "#44ff44");
+    updateOnlineCount();
+  } catch (e) {
+    console.log("Offline mode:", e);
+    addChatMessage("System", "🌐 Playing offline", "#ffaa00");
+  }
+}
+
+function addOtherPlayerFirebase(data) {
+  if (otherPlayers[data.id]) return;
+  if (!scene || !scene.physics) return;
+  var sprite = scene.physics.add.image(
+    data.x || 400,
+    data.y || 300,
+    "otherPlayerTex",
+  );
+  var nameTag = scene.add.text(
+    data.x - 30,
+    data.y - 52,
+    data.name || "Player",
+    { fontSize: "12px", fill: "#cc88ff" },
+  );
+  otherPlayers[data.id] = {
+    sprite: sprite,
+    nameTag: nameTag,
+    name: data.name,
+  };
+}
+
+function updateOnlineCount() {
+  if (!playersRef) return;
+  playersRef.once("value", function (snapshot) {
+    updatePlayerCount(snapshot.numChildren());
+  });
+}
+
+function sendPositionToFirebase() {
+  if (!playersRef || !myPlayerId || !player) return;
+  playersRef.child(myPlayerId).update({
+    x: Math.floor(player.x),
+    y: Math.floor(player.y),
+    dimension: currentDimension,
+  });
+}
+
+function addTombstoneVisual(x, y, name, level, color) {
+  if (!scene) return;
+  var stone = scene.add.image(x, y, "tombstoneTex").setDepth(7);
+  var label = scene.add
+    .text(x, y - 34, "💀 " + name + "\nLv." + level, {
+      fontSize: "10px",
+      fill: color || "#cccccc",
+      stroke: "#000",
+      strokeThickness: 2,
+      align: "center",
+    })
+    .setOrigin(0.5)
+    .setDepth(7);
+  tombstones.push({ stone: stone, label: label });
+}
 
 // ================================
 // CHAT (offline - local only)
@@ -2380,7 +2526,17 @@ function openChat() {
   input.onkeydown = function (e) {
     if (e.key === "Enter") {
       var msg = input.value.trim();
-      if (msg) addChatMessage(playerName, msg, "#ffffff");
+      if (msg) {
+        addChatMessage(playerName, msg, "#aaffaa");
+        if (chatRef && myPlayerId) {
+          chatRef.push({
+            name: playerClass.icon + " " + playerName,
+            message: msg,
+            senderId: myPlayerId,
+            time: Date.now(),
+          });
+        }
+      }
       input.value = "";
       input.disabled = true;
       chatOpen = false;
@@ -2679,6 +2835,9 @@ function update() {
 
   // Attack indicator
   if (attackIndicator) attackIndicator.setPosition(player.x, player.y);
+  if (scene.game.getFrame() % 5 === 0) {
+    sendPositionToFirebase();
+  }
 
   updateMinimap();
 
