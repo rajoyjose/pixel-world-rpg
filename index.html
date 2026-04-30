@@ -657,32 +657,26 @@
       }
     </script>
     <script>
-            function selectClass(cls) {
-              window._selectedClass = cls;
-              document
-                .querySelectorAll(".classCard")
-                .forEach((c) => c.classList.remove("selected"));
-              var card = document.getElementById("card-" + cls);
-              if (card) card.classList.add("selected");
-            }
-         <!-- Firebase -->
-      <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-    <script>
+                  function selectClass(cls) {
+                    window._selectedClass = cls;
+                    document
+                      .querySelectorAll(".classCard")
+                      .forEach((c) => c.classList.remove("selected"));
+                    var card = document.getElementById("card-" + cls);
+                    if (card) card.classList.add("selected");
+                  }
+             // For Firebase JS SDK v7.20.0 and later, measurementId is optional
       const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_AUTH_DOMAIN",
-        databaseURL: "YOUR_DATABASE_URL",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_STORAGE_BUCKET",
-        messagingSenderId: "YOUR_SENDER_ID",
-        appId: "YOUR_APP_ID",
+        apiKey: "AIzaSyDMS1BvpwEHcOkhsove5MKVgUiso1cj6w4",
+        authDomain: "pixel-world-rpg.firebaseapp.com",
+        databaseURL: "https://pixel-world-rpg-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "pixel-world-rpg",
+        storageBucket: "pixel-world-rpg.firebasestorage.app",
+        messagingSenderId: "567750829335",
+        appId: "1:567750829335:web:7e46e33a35a6d8076f4352",
+        measurementId: "G-CHBQ3613GV"
       };
-      firebase.initializeApp(firebaseConfig);
-      console.log("Firebase ready!");
+          <script src="src/game.js">
     </script>
-    <script src="src/game.js"></script>
   </body>
 </html>
