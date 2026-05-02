@@ -4,138 +4,126 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <title>Pixel World RPG</title>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none;-webkit-user-select:none;}
         body{background:#000;overflow:hidden;font-family:Arial,sans-serif;position:fixed;width:100%;height:100%;}
         canvas{display:block;}
-        :root{--gold:#ffdd44;--red:#ff4444;--purple:#aa44ff;--green:#44ff88;--blue:#4488ff;}
 
-        /* ===== SCREENS ===== */
-        .screen{position:fixed;top:0;left:0;width:100%;height:100%;display:none;z-index:900;overflow-y:auto;color:#fff;font-family:Arial,sans-serif;}
-        .screen.active{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:12px;gap:8px;}
-
-        /* ===== MAIN MENU ===== */
+        /* SCREENS */
+        .screen{position:fixed;top:0;left:0;width:100%;height:100%;display:none;z-index:900;overflow-y:auto;color:#fff;}
+        .screen.active{display:flex;flex-direction:column;align-items:center;padding:10px;gap:7px;}
         #mainMenu{background:radial-gradient(ellipse at center,#1a0a2e 0%,#000 100%);}
-        #mainMenu h1{font-size:clamp(26px,5vw,46px);color:var(--gold);text-shadow:0 0 30px #ffaa00;letter-spacing:3px;margin-top:8px;}
-        .subtitle{font-size:clamp(10px,2vw,13px);color:#555;letter-spacing:2px;text-transform:uppercase;}
-        .menuRow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
-        .menuBtn{padding:10px 22px;font-size:clamp(13px,3vw,16px);background:rgba(255,255,255,0.07);border:2px solid #444;border-radius:8px;color:#fff;cursor:pointer;transition:all 0.2s;}
-        .menuBtn:hover,.menuBtn:active{border-color:var(--gold);background:rgba(255,221,68,0.12);}
-        .menuBtn.primary{background:linear-gradient(135deg,#cc8800,#ffaa00);color:#000;border:none;font-weight:bold;}
+        #shopScreen{background:radial-gradient(ellipse at center,#1a1000 0%,#000 100%);}
 
-        /* Name input */
-        #nameInput{padding:9px 16px;font-size:clamp(13px,3vw,16px);border-radius:8px;border:2px solid var(--gold);background:rgba(255,255,255,0.05);color:#fff;text-align:center;width:min(220px,78vw);outline:none;touch-action:auto;user-select:auto;-webkit-user-select:auto;}
+        h1.title{font-size:clamp(24px,5vw,44px);color:#ffdd44;text-shadow:0 0 30px #ffaa00;letter-spacing:3px;margin-top:6px;}
+        .subtitle{font-size:12px;color:#555;letter-spacing:2px;text-transform:uppercase;}
+        .sectionLabel{font-size:12px;color:#ffaa00;letter-spacing:2px;text-transform:uppercase;margin-top:3px;}
+        .goldBadge{font-size:14px;color:#ffdd44;background:rgba(255,221,68,0.1);border:1px solid #554400;border-radius:8px;padding:5px 14px;}
+
+        #nameInput{padding:9px 16px;font-size:15px;border-radius:8px;border:2px solid #ffdd44;background:rgba(255,255,255,0.05);color:#fff;text-align:center;width:min(220px,78vw);outline:none;touch-action:auto;user-select:auto;-webkit-user-select:auto;}
 
         /* Mode cards */
-        #gameModeSelect{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;width:min(600px,96vw);}
-        .modeCard{padding:10px 8px;border:2px solid #333;border-radius:10px;cursor:pointer;text-align:center;transition:all 0.2s;background:rgba(255,255,255,0.03);}
-        .modeCard:active,.modeCard.selected{border-color:var(--gold);background:rgba(255,221,68,0.1);transform:translateY(-2px);}
-        .modeIcon{font-size:clamp(24px,5vw,32px);margin-bottom:4px;}
-        .modeName{font-size:clamp(11px,2.5vw,14px);font-weight:bold;margin-bottom:3px;}
-        .modeDesc{font-size:clamp(9px,1.8vw,10px);color:#888;line-height:1.3;}
+        #gameModeSelect{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:7px;width:min(600px,96vw);}
+        .modeCard{padding:10px 7px;border:2px solid #333;border-radius:10px;cursor:pointer;text-align:center;transition:all 0.2s;background:rgba(255,255,255,0.03);}
+        .modeCard.selected,.modeCard:active{border-color:#ffdd44;background:rgba(255,221,68,0.1);transform:translateY(-2px);}
+        .modeIcon{font-size:clamp(22px,5vw,30px);margin-bottom:4px;}
+        .modeName{font-size:clamp(11px,2.5vw,13px);font-weight:bold;margin-bottom:2px;}
+        .modeDesc{font-size:clamp(9px,1.8vw,10px);color:#777;line-height:1.3;}
 
         /* Class cards */
-        #classSelect{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:6px;width:min(600px,96vw);}
+        #classSelect{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:6px;width:min(600px,96vw);}
         .classCard{padding:7px 5px;border:2px solid #333;border-radius:9px;cursor:pointer;text-align:center;transition:all 0.2s;background:rgba(255,255,255,0.03);position:relative;}
-        .classCard:active,.classCard.selected{border-color:var(--gold);background:rgba(255,221,68,0.1);transform:translateY(-2px);}
-        .classCard.locked{opacity:0.5;}
-        .classCard.locked::after{content:'🔒';position:absolute;top:2px;right:4px;font-size:12px;}
-        .classIcon{font-size:clamp(20px,4vw,28px);}
-        .className{font-size:clamp(10px,2vw,12px);font-weight:bold;margin:2px 0;}
-        .classDesc{font-size:clamp(8px,1.5vw,10px);color:#888;line-height:1.3;}
-        .classAbility{font-size:clamp(8px,1.5vw,9px);color:#ffcc44;margin-top:2px;}
-        .classPrice{font-size:10px;color:var(--gold);margin-top:2px;}
+        .classCard.selected,.classCard:active{border-color:#ffdd44;background:rgba(255,221,68,0.1);transform:translateY(-2px);}
+        .classCard.locked{opacity:0.55;cursor:pointer;}
+        .classCard.locked::after{content:'🔒';position:absolute;top:2px;right:3px;font-size:11px;}
+        .classIcon{font-size:clamp(18px,4vw,26px);}
+        .className{font-size:clamp(9px,2vw,11px);font-weight:bold;margin:2px 0;}
+        .classAbility{font-size:clamp(8px,1.5vw,9px);color:#ffcc44;margin-top:1px;}
+        .classCost{font-size:9px;color:#ffdd44;margin-top:1px;}
 
-        /* Skin selector */
-        #skinPicker{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:min(400px,90vw);}
-        .skinSwatch{width:40px;height:40px;border-radius:8px;border:3px solid #444;cursor:pointer;transition:all 0.2s;}
-        .skinSwatch.selected{border-color:var(--gold);transform:scale(1.15);}
+        /* Skin swatches */
+        #skinPicker{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;width:min(380px,90vw);}
+        .skinSwatch{width:38px;height:38px;border-radius:8px;border:3px solid #444;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;font-size:16px;}
+        .skinSwatch.selected{border-color:#ffdd44;transform:scale(1.15);}
+        .skinSwatch.locked{opacity:0.5;}
 
-        .sectionLabel{font-size:clamp(11px,2vw,13px);color:#ffaa00;letter-spacing:2px;text-transform:uppercase;margin-top:4px;}
-        .goldDisplay{font-size:15px;color:var(--gold);background:rgba(255,221,68,0.1);border:1px solid #554400;border-radius:8px;padding:6px 14px;}
+        /* Lobby */
+        #lobbyBox{background:rgba(0,0,40,0.6);border:1px solid #334;border-radius:10px;padding:10px;width:min(380px,92vw);text-align:center;}
+        #lobbyBox h3{color:#4488ff;font-size:14px;margin-bottom:6px;}
+        .lobbyInput{padding:7px 12px;font-size:14px;border-radius:6px;border:2px solid #4488ff;background:rgba(0,0,0,0.5);color:#fff;text-align:center;width:150px;outline:none;touch-action:auto;user-select:auto;-webkit-user-select:auto;text-transform:uppercase;letter-spacing:3px;}
+        .lobbyBtn{padding:7px 14px;font-size:13px;background:rgba(68,136,255,0.2);border:2px solid #4488ff;color:#fff;border-radius:6px;cursor:pointer;margin:3px;}
+        #roomDisplay{font-size:20px;color:#4488ff;letter-spacing:5px;font-weight:bold;margin:5px 0;}
 
-        /* Lobby section */
-        #lobbySection{background:rgba(0,0,40,0.6);border:1px solid #334;border-radius:10px;padding:12px;width:min(400px,92vw);text-align:center;}
-        #lobbySection h3{color:#4488ff;margin-bottom:8px;}
-        .lobbyInput{padding:8px 14px;font-size:15px;border-radius:6px;border:2px solid #4488ff;background:rgba(0,0,0,0.5);color:#fff;text-align:center;width:160px;outline:none;touch-action:auto;user-select:auto;-webkit-user-select:auto;text-transform:uppercase;letter-spacing:3px;}
-        .lobbyBtn{padding:8px 18px;font-size:14px;background:rgba(68,136,255,0.2);border:2px solid #4488ff;color:#fff;border-radius:6px;cursor:pointer;margin:4px;}
-        .lobbyBtn:hover{background:rgba(68,136,255,0.4);}
-        #roomCodeDisplay{font-size:24px;color:var(--blue);letter-spacing:6px;font-weight:bold;margin:6px 0;}
-
-        #startBtn{padding:clamp(10px,3vw,13px) clamp(24px,7vw,38px);font-size:clamp(15px,3.5vw,19px);background:linear-gradient(135deg,#cc8800,#ffaa00);color:#000;border:none;border-radius:10px;cursor:pointer;font-weight:bold;box-shadow:0 4px 20px rgba(255,170,0,0.4);}
+        .menuRow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+        #startBtn{padding:11px 30px;font-size:17px;background:linear-gradient(135deg,#cc8800,#ffaa00);color:#000;border:none;border-radius:10px;cursor:pointer;font-weight:bold;box-shadow:0 4px 20px rgba(255,170,0,0.35);}
         #startBtn:active{transform:scale(0.97);}
-        .menuTip{font-size:clamp(9px,1.8vw,11px);color:#444;text-align:center;}
+        .menuBtn{padding:10px 20px;font-size:14px;background:rgba(255,255,255,0.07);border:2px solid #444;border-radius:8px;color:#fff;cursor:pointer;}
+        .menuBtn:active{border-color:#ffdd44;}
+        .menuTip{font-size:10px;color:#444;text-align:center;}
 
-        /* ===== SHOP SCREEN ===== */
-        #shopScreen{background:radial-gradient(ellipse at center,#1a1000 0%,#000 100%);}
-        #shopScreen h1{font-size:32px;color:var(--gold);margin-top:8px;}
-        .shopTabs{display:flex;gap:8px;margin-bottom:4px;}
-        .shopTab{padding:8px 18px;border:2px solid #444;border-radius:8px;cursor:pointer;background:rgba(255,255,255,0.05);color:#ccc;font-size:14px;}
-        .shopTab.active{border-color:var(--gold);background:rgba(255,221,68,0.1);color:var(--gold);}
-        .shopGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;width:min(600px,94vw);max-height:50vh;overflow-y:auto;padding:4px;}
-        .shopItem{padding:12px 8px;border:2px solid #333;border-radius:10px;text-align:center;background:rgba(255,255,255,0.03);cursor:pointer;transition:all 0.2s;}
-        .shopItem:hover{border-color:var(--gold);background:rgba(255,221,68,0.08);}
-        .shopItem.owned{border-color:#44ff44;background:rgba(68,255,68,0.05);cursor:default;}
-        .shopItemIcon{font-size:28px;margin-bottom:5px;}
-        .shopItemName{font-size:12px;font-weight:bold;margin-bottom:3px;}
-        .shopItemPrice{font-size:13px;color:var(--gold);}
-        .shopItemOwned{font-size:12px;color:#44ff44;}
-        .shopItemDesc{font-size:10px;color:#888;margin-top:2px;}
-        .skinPreviewBox{width:40px;height:40px;border-radius:6px;margin:0 auto 6px;border:2px solid #555;}
+        /* SHOP */
+        #shopScreen h1{font-size:28px;color:#ffdd44;margin-top:8px;}
+        .shopTabs{display:flex;gap:8px;}
+        .shopTab{padding:7px 16px;border:2px solid #444;border-radius:7px;cursor:pointer;color:#888;font-size:13px;}
+        .shopTab.active{border-color:#ffdd44;color:#ffdd44;background:rgba(255,221,68,0.08);}
+        .shopGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:9px;width:min(580px,94vw);max-height:48vh;overflow-y:auto;padding:3px;}
+        .shopItem{padding:11px 7px;border:2px solid #333;border-radius:10px;text-align:center;background:rgba(255,255,255,0.03);cursor:pointer;transition:all 0.2s;}
+        .shopItem:not(.owned):hover{border-color:#ffdd44;background:rgba(255,221,68,0.07);}
+        .shopItem.owned{border-color:#44ff44;background:rgba(68,255,68,0.04);cursor:default;}
+        .shopItemIcon{font-size:26px;margin-bottom:4px;}
+        .shopItemName{font-size:11px;font-weight:bold;margin-bottom:2px;}
+        .shopItemPrice{font-size:12px;color:#ffdd44;}
+        .shopItemOwned{font-size:11px;color:#44ff44;}
+        .shopItemDesc{font-size:9px;color:#666;margin-top:2px;line-height:1.3;}
+        .skinBox{width:36px;height:36px;border-radius:6px;margin:0 auto 5px;border:2px solid #444;}
 
-        /* ===== HUD ===== */
+        /* HUD */
         #chatBox{position:fixed;bottom:155px;right:10px;width:min(230px,54vw);background:rgba(0,0,0,0.8);border:1px solid #333;border-radius:8px;padding:7px;z-index:100;display:none;}
         #chatMessages{height:75px;overflow-y:auto;margin-bottom:5px;font-size:11px;color:#fff;}
         #chatInput{width:100%;background:#1a1a1a;border:1px solid #444;color:#fff;padding:4px 7px;border-radius:4px;font-size:11px;touch-action:auto;user-select:auto;-webkit-user-select:auto;}
         #playerCount{position:fixed;top:7px;right:10px;color:#44ff44;font-size:12px;background:rgba(0,0,0,0.7);padding:3px 8px;border-radius:5px;z-index:100;display:none;}
         #minimap{position:fixed;bottom:155px;left:10px;width:clamp(85px,17vw,115px);height:clamp(85px,17vw,115px);background:rgba(0,0,0,0.7);border:2px solid #333;border-radius:6px;z-index:100;display:none;}
-        #dimensionIndicator{position:fixed;top:28px;right:10px;font-size:11px;background:rgba(0,0,0,0.7);padding:3px 9px;border-radius:5px;z-index:100;display:none;border:1px solid #555;}
-        #gameModeHUD{position:fixed;top:7px;left:50%;transform:translateX(-50%);font-size:13px;background:rgba(0,0,0,0.7);padding:4px 14px;border-radius:5px;z-index:100;display:none;color:#ffaa00;border:1px solid #664400;}
-        #waveHUD{position:fixed;top:32px;left:50%;transform:translateX(-50%);font-size:13px;background:rgba(0,0,0,0.8);padding:4px 14px;border-radius:5px;z-index:100;display:none;color:#ff4444;border:1px solid #ff4444;}
-        #goldHUD{position:fixed;top:52px;right:10px;font-size:12px;background:rgba(0,0,0,0.7);padding:3px 9px;border-radius:5px;z-index:100;display:none;color:var(--gold);border:1px solid #554400;}
-        #questPanel{position:fixed;top:70px;right:10px;width:min(195px,47vw);background:rgba(0,0,0,0.85);border:1px solid #664400;border-radius:8px;padding:7px;z-index:100;display:none;color:#fff;}
-        #questPanel h3{color:#ffaa00;font-size:12px;margin-bottom:4px;padding-bottom:3px;border-bottom:1px solid #333;}
-        .questItem{font-size:10px;margin-bottom:3px;padding:3px 4px;border-radius:4px;background:rgba(255,255,255,0.03);line-height:1.4;}
+        #dimensionHUD{position:fixed;top:28px;right:10px;font-size:11px;background:rgba(0,0,0,0.7);padding:3px 9px;border-radius:5px;z-index:100;display:none;border:1px solid #555;}
+        #modeHUD{position:fixed;top:7px;left:50%;transform:translateX(-50%);font-size:12px;background:rgba(0,0,0,0.7);padding:4px 13px;border-radius:5px;z-index:100;display:none;color:#ffaa00;border:1px solid #554400;}
+        #waveHUD{position:fixed;top:30px;left:50%;transform:translateX(-50%);font-size:13px;background:rgba(0,0,0,0.8);padding:4px 13px;border-radius:5px;z-index:100;display:none;color:#ff4444;border:1px solid #ff4444;}
+        #goldHUD{position:fixed;top:50px;right:10px;font-size:12px;background:rgba(0,0,0,0.7);padding:3px 9px;border-radius:5px;z-index:100;display:none;color:#ffdd44;border:1px solid #554400;}
+        #questPanel{position:fixed;top:68px;right:10px;width:min(190px,46vw);background:rgba(0,0,0,0.85);border:1px solid #553300;border-radius:8px;padding:7px;z-index:100;display:none;}
+        #questPanel h3{color:#ffaa00;font-size:11px;margin-bottom:4px;border-bottom:1px solid #333;padding-bottom:3px;}
+        .questItem{font-size:10px;margin-bottom:3px;padding:2px 3px;border-radius:3px;background:rgba(255,255,255,0.03);line-height:1.4;}
         .questItem.done{color:#44ff44;opacity:0.6;}
-        .questProgress{color:#888;font-size:9px;}
+        .questProgress{color:#666;font-size:9px;}
         .questReward{color:#ffcc44;font-size:9px;}
-        #saveNotif{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.95);border:2px solid #00ffff;border-radius:12px;padding:18px 36px;z-index:9000;display:none;color:#00ffff;font-size:16px;text-align:center;pointer-events:none;}
-        #attackHint{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);font-size:12px;color:#666;background:rgba(0,0,0,0.6);padding:3px 11px;border-radius:5px;z-index:100;display:none;}
-        #abilityBar{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:none;gap:8px;z-index:100;align-items:flex-end;}
+        #saveNotif{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,5,15,0.97);border:2px solid #00ffff;border-radius:12px;padding:16px 34px;z-index:9000;display:none;color:#00ffff;font-size:15px;text-align:center;pointer-events:none;}
+        #attackHint{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);font-size:12px;color:#555;background:rgba(0,0,0,0.6);padding:3px 11px;border-radius:5px;z-index:100;display:none;}
+        #abilityBar{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:none;gap:7px;z-index:100;align-items:flex-end;}
         .abilitySlot{display:flex;flex-direction:column;align-items:center;gap:2px;}
-        .abilityLabel{font-size:10px;color:#666;}
-        .abilityBtn{width:54px;height:54px;background:rgba(0,0,0,0.85);border:2px solid #ffaa00;border-radius:8px;color:#fff;font-size:21px;display:flex;align-items:center;justify-content:center;}
-        .abilityBtn.cooldown{border-color:#333;opacity:0.45;}
+        .abilityLabel{font-size:10px;color:#555;}
+        .abilityBtnUI{width:52px;height:52px;background:rgba(0,0,0,0.85);border:2px solid #ffaa00;border-radius:8px;color:#fff;font-size:21px;display:flex;align-items:center;justify-content:center;}
+        .abilityBtnUI.cooldown{border-color:#333;opacity:0.45;}
 
-        /* Shop HUD button */
-        #shopHudBtn{position:fixed;bottom:20px;right:10px;width:48px;height:48px;background:rgba(255,221,68,0.15);border:2px solid var(--gold);border-radius:10px;display:none;align-items:center;justify-content:center;font-size:22px;cursor:pointer;z-index:100;}
-
-        /* ===== TOUCH CONTROLS ===== */
+        /* Touch */
         #joystickZone{position:fixed;bottom:0;left:0;width:50%;height:200px;z-index:200;display:none;}
-        #joystickBase{position:absolute;bottom:28px;left:48px;width:108px;height:108px;border-radius:50%;background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;}
-        #joystickThumb{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.38);border:2px solid rgba(255,255,255,0.65);}
+        #joystickBase{position:absolute;bottom:28px;left:48px;width:106px;height:106px;border-radius:50%;background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.16);display:flex;align-items:center;justify-content:center;}
+        #joystickThumb{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,0.36);border:2px solid rgba(255,255,255,0.6);}
         #actionButtons{position:fixed;bottom:18px;right:12px;z-index:200;display:none;flex-direction:column;gap:9px;align-items:flex-end;}
         #actionRow1,#actionRow2{display:flex;gap:9px;}
-        .actionBtn{width:62px;height:62px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:25px;border:2px solid rgba(255,255,255,0.28);background:rgba(0,0,0,0.6);color:#fff;cursor:pointer;}
-        .actionBtn span.label{font-size:9px;color:#888;margin-top:1px;}
+        .actionBtn{width:62px;height:62px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:24px;border:2px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.6);color:#fff;cursor:pointer;}
+        .actionBtn span.lbl{font-size:9px;color:#888;margin-top:1px;}
         .actionBtn:active{transform:scale(0.88);}
-        #attackBtn2{width:74px;height:74px;font-size:29px;background:rgba(175,28,28,0.72);border-color:#ff4444;}
-        #abilityBtn2{background:rgba(95,55,175,0.72);border-color:#aa88ff;}
-        #potionBtn{background:rgba(175,55,115,0.72);border-color:#ff88cc;}
-        #sprintBtn{background:rgba(28,95,175,0.72);border-color:#4488ff;}
+        #attackBtn2{width:72px;height:72px;font-size:28px;background:rgba(170,28,28,0.72);border-color:#ff4444;}
+        #abilityBtn2{background:rgba(90,55,170,0.72);border-color:#aa88ff;}
+        #potionBtn{background:rgba(170,55,110,0.72);border-color:#ff88cc;}
+        #sprintBtn{background:rgba(28,90,170,0.72);border-color:#4488ff;}
     </style>
 </head>
 <body>
 
-<!-- ===== MAIN MENU ===== -->
+<!-- MAIN MENU -->
 <div id="mainMenu" class="screen active">
-    <h1>⚔️ PIXEL WORLD RPG</h1>
+    <h1 class="title">⚔️ PIXEL WORLD RPG</h1>
     <div class="subtitle">Choose Your Destiny</div>
-
-    <!-- Gold display -->
-    <div class="goldDisplay" id="menuGoldDisplay">💰 0 Gold</div>
+    <div class="goldBadge" id="menuGold">💰 0 Gold</div>
 
     <input id="nameInput" type="text" placeholder="Your hero name..." maxlength="16" autocomplete="off" autocorrect="off" autocapitalize="off"/>
 
@@ -145,309 +133,238 @@
         <div class="modeCard selected" onclick="selectMode('adventure')" id="mode-adventure">
             <div class="modeIcon">🌲</div>
             <div class="modeName" style="color:#44ff88">Adventure</div>
-            <div class="modeDesc">Forest world with river, caves and the Dragon King!</div>
+            <div class="modeDesc">Forest world, shadow realm & Dragon King!</div>
         </div>
         <div class="modeCard" onclick="selectMode('survival')" id="mode-survival">
             <div class="modeIcon">🔥</div>
             <div class="modeName" style="color:#ff8844">Survival</div>
-            <div class="modeDesc">Lava fortress. Survive endless waves of fire enemies!</div>
+            <div class="modeDesc">Lava fortress. Survive endless waves!</div>
         </div>
         <div class="modeCard" onclick="selectMode('bossrush')" id="mode-bossrush">
             <div class="modeIcon">💀</div>
             <div class="modeName" style="color:#cc44ff">Boss Rush</div>
-            <div class="modeDesc">Dungeon rooms. Fight 5 unique bosses back to back!</div>
+            <div class="modeDesc">Dungeon rooms. 5 unique bosses!</div>
         </div>
         <div class="modeCard" onclick="selectMode('pvp')" id="mode-pvp">
             <div class="modeIcon">⚔️</div>
             <div class="modeName" style="color:#ff88ff">PvP Arena</div>
-            <div class="modeDesc">Stone arena. Pure player vs player combat. No mobs!</div>
+            <div class="modeDesc">Colosseum. Players only, no mobs!</div>
         </div>
     </div>
 
-    <!-- Class Select -->
-    <div class="sectionLabel">⚔️ Choose Class</div>
+    <!-- Classes — all 8 free + 4 new premium -->
+    <div class="sectionLabel">⚔️ Choose Class (All 8 original classes are FREE!)</div>
     <div id="classSelect">
-        <div class="classCard selected" onclick="selectClass('warrior')" id="card-warrior">
+        <!-- FREE CLASSES -->
+        <div class="classCard selected" onclick="pickClass('warrior')" id="card-warrior">
             <div class="classIcon">⚔️</div>
             <div class="className" style="color:#ff8888">Warrior</div>
-            <div class="classDesc">Iron defence, unstoppable</div>
             <div class="classAbility">🛡️ Shield Bash</div>
-            <div class="classPrice">Free</div>
+            <div class="classCost">Free</div>
         </div>
-        <div class="classCard" onclick="selectClass('archer')" id="card-archer">
+        <div class="classCard" onclick="pickClass('archer')" id="card-archer">
             <div class="classIcon">🏹</div>
             <div class="className" style="color:#88ff88">Archer</div>
-            <div class="classDesc">Fast, long range</div>
             <div class="classAbility">🏹 Arrow Rain</div>
-            <div class="classPrice">Free</div>
+            <div class="classCost">Free</div>
         </div>
-        <div class="classCard locked" onclick="selectClass('mage')" id="card-mage">
+        <div class="classCard" onclick="pickClass('mage')" id="card-mage">
             <div class="classIcon">🧙</div>
             <div class="className" style="color:#8888ff">Mage</div>
-            <div class="classDesc">Huge magic damage</div>
             <div class="classAbility">🔥 Fireball</div>
-            <div class="classPrice">💰 200 Gold</div>
+            <div class="classCost">Free</div>
         </div>
-        <div class="classCard locked" onclick="selectClass('rogue')" id="card-rogue">
+        <div class="classCard" onclick="pickClass('rogue')" id="card-rogue">
             <div class="classIcon">🗡️</div>
             <div class="className" style="color:#ffaa44">Rogue</div>
-            <div class="classDesc">High crit chance</div>
             <div class="classAbility">👁️ Vanish</div>
-            <div class="classPrice">💰 300 Gold</div>
+            <div class="classCost">Free</div>
         </div>
-        <div class="classCard locked" onclick="selectClass('paladin')" id="card-paladin">
+        <div class="classCard" onclick="pickClass('paladin')" id="card-paladin">
             <div class="classIcon">⚜️</div>
             <div class="className" style="color:#ffddaa">Paladin</div>
-            <div class="classDesc">Heals + smites evil</div>
             <div class="classAbility">✨ Holy Aura</div>
-            <div class="classPrice">💰 400 Gold</div>
+            <div class="classCost">Free</div>
         </div>
-        <div class="classCard locked" onclick="selectClass('necromancer')" id="card-necromancer">
+        <div class="classCard" onclick="pickClass('necromancer')" id="card-necromancer">
             <div class="classIcon">💀</div>
             <div class="className" style="color:#88ff88">Necromancer</div>
-            <div class="classDesc">Raises skeletons</div>
             <div class="classAbility">☠️ Raise Dead</div>
-            <div class="classPrice">💰 500 Gold</div>
+            <div class="classCost">Free</div>
         </div>
-        <div class="classCard locked" onclick="selectClass('berserker')" id="card-berserker">
+        <div class="classCard" onclick="pickClass('berserker')" id="card-berserker">
             <div class="classIcon">🪓</div>
             <div class="className" style="color:#ff4444">Berserker</div>
-            <div class="classDesc">Stronger when hurt</div>
             <div class="classAbility">😤 Berserk Rage</div>
-            <div class="classPrice">💰 600 Gold</div>
+            <div class="classCost">Free</div>
         </div>
-        <div class="classCard locked" onclick="selectClass('ranger')" id="card-ranger">
+        <div class="classCard" onclick="pickClass('ranger')" id="card-ranger">
             <div class="classIcon">🌿</div>
             <div class="className" style="color:#44ffaa">Ranger</div>
-            <div class="classDesc">Wolf companion</div>
             <div class="classAbility">🐺 Wolf Pack</div>
-            <div class="classPrice">💰 700 Gold</div>
+            <div class="classCost">Free</div>
+        </div>
+        <!-- PREMIUM CLASSES — unlockable in shop -->
+        <div class="classCard locked" onclick="pickClass('druid')" id="card-druid">
+            <div class="classIcon">🌙</div>
+            <div class="className" style="color:#aaffcc">Druid</div>
+            <div class="classAbility">🌿 Nature Heal</div>
+            <div class="classCost">💰 300 Gold</div>
+        </div>
+        <div class="classCard locked" onclick="pickClass('assassin')" id="card-assassin">
+            <div class="classIcon">🥷</div>
+            <div class="className" style="color:#ff6688">Assassin</div>
+            <div class="classAbility">⚡ Chain Strike</div>
+            <div class="classCost">💰 400 Gold</div>
+        </div>
+        <div class="classCard locked" onclick="pickClass('warlord')" id="card-warlord">
+            <div class="classIcon">👑</div>
+            <div class="className" style="color:#ffcc44">Warlord</div>
+            <div class="classAbility">⚔️ Rally Army</div>
+            <div class="classCost">💰 500 Gold</div>
+        </div>
+        <div class="classCard locked" onclick="pickClass('archmage')" id="card-archmage">
+            <div class="classIcon">🔮</div>
+            <div class="className" style="color:#cc88ff">Archmage</div>
+            <div class="classAbility">💥 Meteor Strike</div>
+            <div class="classCost">💰 600 Gold</div>
         </div>
     </div>
 
     <!-- Skin Picker -->
-    <div class="sectionLabel">🎨 Choose Skin Color</div>
+    <div class="sectionLabel">🎨 Skin Color</div>
     <div id="skinPicker">
-        <div class="skinSwatch selected" style="background:#4488ff" onclick="selectSkin(0,'#4488ff',0x4488ff)" id="skin-0"></div>
-        <div class="skinSwatch" style="background:#ff4444" onclick="selectSkin(1,'#ff4444',0xff4444)" id="skin-1"></div>
-        <div class="skinSwatch" style="background:#44ff44" onclick="selectSkin(2,'#44ff44',0x44ff44)" id="skin-2"></div>
-        <div class="skinSwatch" style="background:#ffaa00" onclick="selectSkin(3,'#ffaa00',0xffaa00)" id="skin-3"></div>
-        <div class="skinSwatch" style="background:#aa44ff" onclick="selectSkin(4,'#aa44ff',0xaa44ff)" id="skin-4"></div>
-        <div class="skinSwatch" style="background:#ff44aa" onclick="selectSkin(5,'#ff44aa',0xff44aa)" id="skin-5"></div>
-        <div class="skinSwatch" style="background:#44ffff" onclick="selectSkin(6,'#44ffff',0x44ffff)" id="skin-6"></div>
-        <div class="skinSwatch" style="background:#ffffff" onclick="selectSkin(7,'#ffffff',0xffffff)" id="skin-7"></div>
-        <!-- Locked premium skins -->
-        <div class="skinSwatch" style="background:linear-gradient(135deg,#ff0,#f00);border-color:#ff0;opacity:0.5;position:relative" onclick="selectSkin(8,'#ffcc00',0xffcc00)" id="skin-8" title="Buy Fire Skin in Shop">🔒</div>
-        <div class="skinSwatch" style="background:linear-gradient(135deg,#000,#444);border-color:#888;opacity:0.5;position:relative" onclick="selectSkin(9,'#222222',0x222222)" id="skin-9" title="Buy Shadow Skin in Shop">🔒</div>
-        <div class="skinSwatch" style="background:linear-gradient(135deg,#0ff,#00f);border-color:#0ff;opacity:0.5;position:relative" onclick="selectSkin(10,'#0088ff',0x0088ff)" id="skin-10" title="Buy Ice Skin in Shop">🔒</div>
-        <div class="skinSwatch" style="background:linear-gradient(135deg,#f0f,#808);border-color:#f0f;opacity:0.5;position:relative" onclick="selectSkin(11,'#ff00ff',0xff00ff)" id="skin-11" title="Buy Galaxy Skin in Shop">🔒</div>
+        <div class="skinSwatch selected" style="background:#4488ff" onclick="pickSkin(0,0x4488ff)" id="sw-0"></div>
+        <div class="skinSwatch" style="background:#ff4444" onclick="pickSkin(1,0xff4444)" id="sw-1"></div>
+        <div class="skinSwatch" style="background:#44ff44" onclick="pickSkin(2,0x44ff44)" id="sw-2"></div>
+        <div class="skinSwatch" style="background:#ffaa00" onclick="pickSkin(3,0xffaa00)" id="sw-3"></div>
+        <div class="skinSwatch" style="background:#aa44ff" onclick="pickSkin(4,0xaa44ff)" id="sw-4"></div>
+        <div class="skinSwatch" style="background:#ff44aa" onclick="pickSkin(5,0xff44aa)" id="sw-5"></div>
+        <div class="skinSwatch" style="background:#44ffff" onclick="pickSkin(6,0x44ffff)" id="sw-6"></div>
+        <div class="skinSwatch" style="background:#ffffff" onclick="pickSkin(7,0xffffff)" id="sw-7"></div>
+        <!-- Premium skins -->
+        <div class="skinSwatch locked" style="background:linear-gradient(135deg,#ff8800,#ffff00)" onclick="pickSkin(8,0xffcc00)" id="sw-8" title="🔒 Fire Skin — buy in Shop">🔒</div>
+        <div class="skinSwatch locked" style="background:linear-gradient(135deg,#111,#555)" onclick="pickSkin(9,0x333333)" id="sw-9" title="🔒 Shadow Skin — buy in Shop">🔒</div>
+        <div class="skinSwatch locked" style="background:linear-gradient(135deg,#0088ff,#00ffff)" onclick="pickSkin(10,0x0088ff)" id="sw-10" title="🔒 Ice Skin — buy in Shop">🔒</div>
+        <div class="skinSwatch locked" style="background:linear-gradient(135deg,#ff00ff,#4400ff)" onclick="pickSkin(11,0xff00ff)" id="sw-11" title="🔒 Galaxy Skin — buy in Shop">🔒</div>
     </div>
 
     <!-- Lobby -->
     <div class="sectionLabel">🔐 Private Lobby (Optional)</div>
-    <div id="lobbySection">
-        <h3>🌐 Lobby Code</h3>
-        <p style="font-size:12px;color:#666;margin-bottom:8px;">Leave empty for public matchmaking</p>
-        <input id="lobbyCodeInput" class="lobbyInput" type="text" placeholder="CODE" maxlength="4" autocomplete="off"/>
+    <div id="lobbyBox">
+        <h3>Lobby Code</h3>
+        <p style="font-size:11px;color:#555;margin-bottom:7px;">Leave empty to play publicly</p>
+        <input id="lobbyInput" class="lobbyInput" type="text" placeholder="CODE" maxlength="4" autocomplete="off"/>
         <br><br>
-        <button class="lobbyBtn" onclick="createPrivateLobby()">🔑 Create Private Lobby</button>
-        <button class="lobbyBtn" onclick="joinWithCode()">🚪 Join Lobby</button>
-        <div id="roomCodeDisplay"></div>
+        <button class="lobbyBtn" onclick="createLobby()">🔑 Create Lobby</button>
+        <button class="lobbyBtn" onclick="joinLobby()">🚪 Join Lobby</button>
+        <div id="roomDisplay"></div>
     </div>
 
     <div class="menuRow">
-        <button id="startBtn">⚔️ Begin Adventure!</button>
+        <button id="startBtn">⚔️ Play!</button>
         <button class="menuBtn" onclick="openShop()">🛒 Shop</button>
     </div>
-    <div class="menuTip">WASD/Joystick: Move | SPACE/⚔️: Attack | E/⚡: Ability | F/💊: Potion | ENTER: Save</div>
+    <div class="menuTip">WASD: Move | SPACE: Attack | E: Ability | F: Potion | ENTER: Save</div>
 </div>
 
-<!-- ===== SHOP SCREEN ===== -->
+<!-- SHOP SCREEN -->
 <div id="shopScreen" class="screen">
-    <h1>🛒 Shop</h1>
-    <div class="goldDisplay" id="shopGoldDisplay">💰 0 Gold</div>
+    <h1 style="font-size:28px;color:#ffdd44;margin-top:8px;">🛒 Shop</h1>
+    <div class="goldBadge" id="shopGold">💰 0 Gold</div>
 
     <div class="shopTabs">
-        <div class="shopTab active" onclick="showShopTab('classes')" id="tab-classes">⚔️ Classes</div>
-        <div class="shopTab" onclick="showShopTab('skins')" id="tab-skins">🎨 Skins</div>
+        <div class="shopTab active" onclick="shopTab('classes')" id="tab-classes">⚔️ Premium Classes</div>
+        <div class="shopTab" onclick="shopTab('skins')" id="tab-skins">🎨 Skins</div>
     </div>
 
-    <!-- Classes tab -->
     <div id="shopClasses" class="shopGrid">
-        <div class="shopItem" id="shop-warrior">
-            <div class="shopItemIcon">⚔️</div>
-            <div class="shopItemName">Warrior</div>
-            <div class="shopItemOwned">✅ Free</div>
-            <div class="shopItemDesc">Iron defence, unstoppable</div>
-        </div>
-        <div class="shopItem" id="shop-archer">
-            <div class="shopItemIcon">🏹</div>
-            <div class="shopItemName">Archer</div>
-            <div class="shopItemOwned">✅ Free</div>
-            <div class="shopItemDesc">Fast, long range</div>
-        </div>
-        <div class="shopItem" id="shop-mage" onclick="buyItem('class','mage',200)">
-            <div class="shopItemIcon">🧙</div>
-            <div class="shopItemName">Mage</div>
-            <div class="shopItemPrice">💰 200 Gold</div>
-            <div class="shopItemDesc">Devastating magic</div>
-        </div>
-        <div class="shopItem" id="shop-rogue" onclick="buyItem('class','rogue',300)">
-            <div class="shopItemIcon">🗡️</div>
-            <div class="shopItemName">Rogue</div>
+        <div class="shopItem" id="si-druid" onclick="buyThing('class','druid',300)">
+            <div class="shopItemIcon">🌙</div>
+            <div class="shopItemName">Druid</div>
             <div class="shopItemPrice">💰 300 Gold</div>
-            <div class="shopItemDesc">High crit chance</div>
+            <div class="shopItemDesc">Heals over time, nature magic</div>
         </div>
-        <div class="shopItem" id="shop-paladin" onclick="buyItem('class','paladin',400)">
-            <div class="shopItemIcon">⚜️</div>
-            <div class="shopItemName">Paladin</div>
+        <div class="shopItem" id="si-assassin" onclick="buyThing('class','assassin',400)">
+            <div class="shopItemIcon">🥷</div>
+            <div class="shopItemName">Assassin</div>
             <div class="shopItemPrice">💰 400 Gold</div>
-            <div class="shopItemDesc">Heals + smites</div>
+            <div class="shopItemDesc">Chain attacks, critical hits</div>
         </div>
-        <div class="shopItem" id="shop-necromancer" onclick="buyItem('class','necromancer',500)">
-            <div class="shopItemIcon">💀</div>
-            <div class="shopItemName">Necromancer</div>
+        <div class="shopItem" id="si-warlord" onclick="buyThing('class','warlord',500)">
+            <div class="shopItemIcon">👑</div>
+            <div class="shopItemName">Warlord</div>
             <div class="shopItemPrice">💰 500 Gold</div>
-            <div class="shopItemDesc">Raises skeletons</div>
+            <div class="shopItemDesc">Rallies nearby fighters</div>
         </div>
-        <div class="shopItem" id="shop-berserker" onclick="buyItem('class','berserker',600)">
-            <div class="shopItemIcon">🪓</div>
-            <div class="shopItemName">Berserker</div>
+        <div class="shopItem" id="si-archmage" onclick="buyThing('class','archmage',600)">
+            <div class="shopItemIcon">🔮</div>
+            <div class="shopItemName">Archmage</div>
             <div class="shopItemPrice">💰 600 Gold</div>
-            <div class="shopItemDesc">Stronger when hurt</div>
-        </div>
-        <div class="shopItem" id="shop-ranger" onclick="buyItem('class','ranger',700)">
-            <div class="shopItemIcon">🌿</div>
-            <div class="shopItemName">Ranger</div>
-            <div class="shopItemPrice">💰 700 Gold</div>
-            <div class="shopItemDesc">Wolf companion</div>
+            <div class="shopItemDesc">Meteor strike destroys all</div>
         </div>
     </div>
 
-    <!-- Skins tab -->
     <div id="shopSkins" class="shopGrid" style="display:none">
-        <div class="shopItem owned" id="shop-skin-0">
-            <div class="skinPreviewBox" style="background:#4488ff"></div>
-            <div class="shopItemName">Blue (Default)</div>
-            <div class="shopItemOwned">✅ Free</div>
-        </div>
-        <div class="shopItem owned" id="shop-skin-1">
-            <div class="skinPreviewBox" style="background:#ff4444"></div>
-            <div class="shopItemName">Red</div>
-            <div class="shopItemOwned">✅ Free</div>
-        </div>
-        <div class="shopItem owned" id="shop-skin-2">
-            <div class="skinPreviewBox" style="background:#44ff44"></div>
-            <div class="shopItemName">Green</div>
-            <div class="shopItemOwned">✅ Free</div>
-        </div>
-        <div class="shopItem owned" id="shop-skin-3">
-            <div class="skinPreviewBox" style="background:#ffaa00"></div>
-            <div class="shopItemName">Orange</div>
-            <div class="shopItemOwned">✅ Free</div>
-        </div>
-        <div class="shopItem owned" id="shop-skin-4">
-            <div class="skinPreviewBox" style="background:#aa44ff"></div>
-            <div class="shopItemName">Purple</div>
-            <div class="shopItemOwned">✅ Free</div>
-        </div>
-        <div class="shopItem owned" id="shop-skin-5">
-            <div class="skinPreviewBox" style="background:#ff44aa"></div>
-            <div class="shopItemName">Pink</div>
-            <div class="shopItemOwned">✅ Free</div>
-        </div>
-        <div class="shopItem owned" id="shop-skin-6">
-            <div class="skinPreviewBox" style="background:#44ffff"></div>
-            <div class="shopItemName">Cyan</div>
-            <div class="shopItemOwned">✅ Free</div>
-        </div>
-        <div class="shopItem owned" id="shop-skin-7">
-            <div class="skinPreviewBox" style="background:#ffffff"></div>
-            <div class="shopItemName">White</div>
-            <div class="shopItemOwned">✅ Free</div>
-        </div>
-        <div class="shopItem" id="shop-skin-8" onclick="buyItem('skin','8',150)">
-            <div class="skinPreviewBox" style="background:linear-gradient(135deg,#ff8800,#ffff00)"></div>
-            <div class="shopItemName">🔥 Fire Skin</div>
-            <div class="shopItemPrice">💰 150 Gold</div>
-        </div>
-        <div class="shopItem" id="shop-skin-9" onclick="buyItem('skin','9',150)">
-            <div class="skinPreviewBox" style="background:linear-gradient(135deg,#111,#444)"></div>
-            <div class="shopItemName">🌑 Shadow Skin</div>
-            <div class="shopItemPrice">💰 150 Gold</div>
-        </div>
-        <div class="shopItem" id="shop-skin-10" onclick="buyItem('skin','10',150)">
-            <div class="skinPreviewBox" style="background:linear-gradient(135deg,#0088ff,#00ffff)"></div>
-            <div class="shopItemName">❄️ Ice Skin</div>
-            <div class="shopItemPrice">💰 150 Gold</div>
-        </div>
-        <div class="shopItem" id="shop-skin-11" onclick="buyItem('skin','11',200)">
-            <div class="skinPreviewBox" style="background:linear-gradient(135deg,#ff00ff,#4400ff)"></div>
-            <div class="shopItemName">🌌 Galaxy Skin</div>
-            <div class="shopItemPrice">💰 200 Gold</div>
-        </div>
+        <div class="shopItem owned" id="si-skin-0"><div class="skinBox" style="background:#4488ff"></div><div class="shopItemName">Blue</div><div class="shopItemOwned">✅ Free</div></div>
+        <div class="shopItem owned" id="si-skin-1"><div class="skinBox" style="background:#ff4444"></div><div class="shopItemName">Red</div><div class="shopItemOwned">✅ Free</div></div>
+        <div class="shopItem owned" id="si-skin-2"><div class="skinBox" style="background:#44ff44"></div><div class="shopItemName">Green</div><div class="shopItemOwned">✅ Free</div></div>
+        <div class="shopItem owned" id="si-skin-3"><div class="skinBox" style="background:#ffaa00"></div><div class="shopItemName">Orange</div><div class="shopItemOwned">✅ Free</div></div>
+        <div class="shopItem owned" id="si-skin-4"><div class="skinBox" style="background:#aa44ff"></div><div class="shopItemName">Purple</div><div class="shopItemOwned">✅ Free</div></div>
+        <div class="shopItem owned" id="si-skin-5"><div class="skinBox" style="background:#ff44aa"></div><div class="shopItemName">Pink</div><div class="shopItemOwned">✅ Free</div></div>
+        <div class="shopItem owned" id="si-skin-6"><div class="skinBox" style="background:#44ffff"></div><div class="shopItemName">Cyan</div><div class="shopItemOwned">✅ Free</div></div>
+        <div class="shopItem owned" id="si-skin-7"><div class="skinBox" style="background:#fff"></div><div class="shopItemName">White</div><div class="shopItemOwned">✅ Free</div></div>
+        <div class="shopItem" id="si-skin-8" onclick="buyThing('skin','8',150)"><div class="skinBox" style="background:linear-gradient(135deg,#ff8800,#ffff00)"></div><div class="shopItemName">🔥 Fire</div><div class="shopItemPrice">💰 150 Gold</div></div>
+        <div class="shopItem" id="si-skin-9" onclick="buyThing('skin','9',150)"><div class="skinBox" style="background:linear-gradient(135deg,#111,#555)"></div><div class="shopItemName">🌑 Shadow</div><div class="shopItemPrice">💰 150 Gold</div></div>
+        <div class="shopItem" id="si-skin-10" onclick="buyThing('skin','10',150)"><div class="skinBox" style="background:linear-gradient(135deg,#0088ff,#00ffff)"></div><div class="shopItemName">❄️ Ice</div><div class="shopItemPrice">💰 150 Gold</div></div>
+        <div class="shopItem" id="si-skin-11" onclick="buyThing('skin','11',200)"><div class="skinBox" style="background:linear-gradient(135deg,#ff00ff,#4400ff)"></div><div class="shopItemName">🌌 Galaxy</div><div class="shopItemPrice">💰 200 Gold</div></div>
     </div>
 
-    <button class="menuBtn primary" onclick="closeShop()">← Back to Menu</button>
+    <button class="menuBtn" onclick="closeShop()" style="margin-top:8px;">← Back</button>
 </div>
 
-<!-- ===== HUD ===== -->
-<div id="playerCount">🟢 1 Online</div>
-<div id="gameModeHUD">🌲 Adventure</div>
-<div id="waveHUD">🌊 Wave 1</div>
-<div id="dimensionIndicator">🌍 Normal World</div>
-<div id="goldHUD">💰 0 Gold</div>
-<canvas id="minimap"></canvas>
-
-<div id="questPanel">
-    <h3>📜 Quests</h3>
-    <div id="questList"></div>
+<!-- HUD elements (hidden until game starts) -->
+<div id="playerCount" style="display:none">🟢 1 Online</div>
+<div id="modeHUD" style="display:none">🌲 Adventure</div>
+<div id="waveHUD" style="display:none">🌊 Wave 1</div>
+<div id="dimensionHUD" style="display:none">🌍 Normal World</div>
+<div id="goldHUD" style="display:none">💰 0 Gold</div>
+<canvas id="minimap" style="display:none"></canvas>
+<div id="questPanel" style="display:none"><h3>📜 Quests</h3><div id="questList"></div></div>
+<div id="saveNotif" style="display:none"><div style="font-size:24px;margin-bottom:5px;">💾</div><div id="saveText">Saved!</div></div>
+<div id="attackHint" style="display:none">SPACE to attack!</div>
+<div id="abilityBar" style="display:none">
+    <div class="abilitySlot"><div class="abilityLabel">SPACE</div><div class="abilityBtnUI">⚔️</div></div>
+    <div class="abilitySlot"><div class="abilityLabel">[E]</div><div class="abilityBtnUI" id="abilityBtn"><span id="abilityIcon">⚡</span></div></div>
 </div>
-
-<div id="saveNotif">
-    <div style="font-size:26px;margin-bottom:6px;">💾</div>
-    <div id="saveNotifText">Game Saved!</div>
-</div>
-
-<div id="attackHint">SPACE to attack!</div>
-<div id="abilityBar">
-    <div class="abilitySlot"><div class="abilityLabel">SPACE</div><div class="abilityBtn">⚔️</div></div>
-    <div class="abilitySlot"><div class="abilityLabel">[E]</div><div class="abilityBtn" id="abilityBtn"><span id="abilityIcon">⚡</span></div></div>
-</div>
-
-<!-- Shop HUD button -->
-<div id="shopHudBtn" onclick="openShopInGame()">🛒</div>
-
-<!-- Touch -->
-<div id="joystickZone"><div id="joystickBase"><div id="joystickThumb"></div></div></div>
-<div id="actionButtons">
+<div id="joystickZone" style="display:none"><div id="joystickBase"><div id="joystickThumb"></div></div></div>
+<div id="actionButtons" style="display:none">
     <div id="actionRow1">
-        <div class="actionBtn" id="sprintBtn" ontouchstart="window.touchSprinting=true" ontouchend="window.touchSprinting=false">🏃<span class="label">Sprint</span></div>
-        <div class="actionBtn" id="abilityBtn2" ontouchstart="handleTouchAbility()"><span id="abilityIcon2">⚡</span><span class="label">Ability</span></div>
+        <div class="actionBtn" id="sprintBtn" ontouchstart="window.touchSprinting=true" ontouchend="window.touchSprinting=false">🏃<span class="lbl">Sprint</span></div>
+        <div class="actionBtn" id="abilityBtn2" ontouchstart="handleAbility()"><span id="abilityIcon2">⚡</span><span class="lbl">Ability</span></div>
     </div>
     <div id="actionRow2">
-        <div class="actionBtn" id="potionBtn" ontouchstart="handleTouchPotion()">💊<span class="label">Potion</span></div>
-        <div class="actionBtn" id="attackBtn2" ontouchstart="handleTouchAttack()">⚔️<span class="label">Attack</span></div>
+        <div class="actionBtn" id="potionBtn" ontouchstart="handlePotion()">💊<span class="lbl">Potion</span></div>
+        <div class="actionBtn" id="attackBtn2" ontouchstart="handleAttack()">⚔️<span class="lbl">Attack</span></div>
     </div>
 </div>
-
-<div id="chatBox">
+<div id="chatBox" style="display:none">
     <div id="chatMessages"></div>
-    <input id="chatInput" type="text" placeholder="Press T to chat..." maxlength="60" disabled autocomplete="off"/>
+    <input id="chatInput" type="text" placeholder="T to chat..." maxlength="60" disabled autocomplete="off"/>
 </div>
 
-<!-- ===== SCRIPTS ===== -->
+<!-- SCRIPTS -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
     var firebaseConfig = {
-        apiKey: "AIzaSyDMS1BvpwEHcOkhsove5MKVgUiso1cj6w4",
-        authDomain: "pixel-world-rpg.firebaseapp.com",
-        databaseURL: "https://pixel-world-rpg-default-rtdb.europe-west1.firebasedatabase.app",
-        projectId: "pixel-world-rpg",
-        storageBucket: "pixel-world-rpg.firebasestorage.app",
-        messagingSenderId: "567750829335",
-        appId: "1:567750829335:web:7e46e33a35a6d8076f4352"
+        apiKey:"AIzaSyDMS1BvpwEHcOkhsove5MKVgUiso1cj6w4",
+        authDomain:"pixel-world-rpg.firebaseapp.com",
+        databaseURL:"https://pixel-world-rpg-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId:"pixel-world-rpg",
+        storageBucket:"pixel-world-rpg.firebasestorage.app",
+        messagingSenderId:"567750829335",
+        appId:"1:567750829335:web:7e46e33a35a6d8076f4352"
     };
     firebase.initializeApp(firebaseConfig);
     var db = firebase.database();
@@ -456,221 +373,172 @@
 <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
 <script>
     // ===== GLOBAL STATE =====
-    window._selectedClass = 'warrior';
-    window._selectedMode  = 'adventure';
-    window._selectedSkin  = 0;
-    window._selectedSkinColor = 0x4488ff;
-    window._roomCode = 'public';
+    window._cls  = 'warrior';
+    window._mode = 'adventure';
+    window._skinColor = 0x4488ff;
+    window._skinIdx   = 0;
+    window._room = 'public';
+    window._pName = 'Hero';
     window.touchSprinting = false;
     window.gameStarted    = false;
+    window._doAttack  = null;
+    window._doAbility = null;
+    window._doPotion  = null;
 
-    // Player data (saved in localStorage + Firebase)
-    var playerData = {
-        gold: 0,
-        ownedClasses: ['warrior','archer'],
-        ownedSkins: ['0','1','2','3','4','5','6','7']
-    };
+    // Player data saved in localStorage
+    var pData = { gold:0, ownedClasses:[], ownedSkins:['0','1','2','3','4','5','6','7'] };
 
-    function loadPlayerData() {
-        try {
-            var saved = localStorage.getItem('rpgPlayerData');
-            if (saved) playerData = JSON.parse(saved);
-        } catch(e) {}
-        updateGoldDisplay();
-        updateClassCards();
-        updateShopOwned();
+    function loadPData(){
+        try{ var s=localStorage.getItem('rpgPData'); if(s) pData=JSON.parse(s); }catch(e){}
+        refreshGoldUI(); refreshClassCards(); refreshShopOwned();
     }
-
-    function savePlayerData() {
-        localStorage.setItem('rpgPlayerData', JSON.stringify(playerData));
-        updateGoldDisplay();
+    function savePData(){
+        localStorage.setItem('rpgPData',JSON.stringify(pData));
+        refreshGoldUI();
     }
-
-    function updateGoldDisplay() {
-        var g = playerData.gold || 0;
-        var els = ['menuGoldDisplay','shopGoldDisplay'];
-        els.forEach(function(id) { var el = document.getElementById(id); if (el) el.textContent = '💰 ' + g + ' Gold'; });
-        var hud = document.getElementById('goldHUD'); if (hud) hud.textContent = '💰 ' + g + ' Gold';
+    function refreshGoldUI(){
+        var g=pData.gold||0;
+        ['menuGold','shopGold'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent='💰 '+g+' Gold';});
+        var h=document.getElementById('goldHUD');if(h)h.textContent='💰 '+g+' Gold';
     }
-
-    function updateClassCards() {
-        Object.keys({warrior:1,archer:1,mage:1,rogue:1,paladin:1,necromancer:1,berserker:1,ranger:1}).forEach(function(cls) {
-            var card = document.getElementById('card-'+cls);
-            if (!card) return;
-            var owned = playerData.ownedClasses.indexOf(cls) !== -1;
-            if (owned) { card.classList.remove('locked'); }
-            else { card.classList.add('locked'); }
+    function refreshClassCards(){
+        // Premium classes only lock if not owned
+        ['druid','assassin','warlord','archmage'].forEach(function(cls){
+            var card=document.getElementById('card-'+cls); if(!card)return;
+            if(pData.ownedClasses.indexOf(cls)!==-1) card.classList.remove('locked');
+            else card.classList.add('locked');
+        });
+    }
+    function refreshShopOwned(){
+        pData.ownedClasses.forEach(function(cls){
+            var el=document.getElementById('si-'+cls); if(!el)return;
+            el.classList.add('owned'); el.onclick=null;
+            el.querySelector('.shopItemPrice')&&(el.querySelector('.shopItemPrice').textContent='');
+            var d=document.createElement('div');d.className='shopItemOwned';d.textContent='✅ Owned';
+            if(!el.querySelector('.shopItemOwned'))el.appendChild(d);
+        });
+        pData.ownedSkins.forEach(function(sid){
+            var el=document.getElementById('si-skin-'+sid); if(!el)return;
+            el.classList.add('owned'); el.onclick=null;
+            // Unlock skin swatch
+            var sw=document.getElementById('sw-'+sid);
+            if(sw){sw.classList.remove('locked');sw.innerHTML='';}
         });
     }
 
-    function updateShopOwned() {
-        playerData.ownedClasses.forEach(function(cls) {
-            var el = document.getElementById('shop-'+cls);
-            if (!el) return;
-            el.classList.add('owned');
-            el.onclick = null;
-            el.innerHTML = el.innerHTML.replace(/<div class="shopItemPrice">.*?<\/div>/, '<div class="shopItemOwned">✅ Owned</div>');
-        });
-        playerData.ownedSkins.forEach(function(sid) {
-            var el = document.getElementById('shop-skin-'+sid);
-            if (!el) return;
-            el.classList.add('owned');
-            el.onclick = null;
-            el.innerHTML = el.innerHTML.replace(/<div class="shopItemPrice">.*?<\/div>/, '<div class="shopItemOwned">✅ Owned</div>');
-        });
-        // Update skin swatches locked state
-        [8,9,10,11].forEach(function(i) {
-            if (playerData.ownedSkins.indexOf(String(i)) !== -1) {
-                var sw = document.getElementById('skin-'+i);
-                if (sw) { sw.style.opacity = '1'; sw.innerHTML = ''; }
-            }
-        });
+    function buyThing(type,id,price){
+        if((pData.gold||0)<price){alert('Need '+price+' gold! Earn gold by killing enemies.');return;}
+        if(type==='class'&&pData.ownedClasses.indexOf(id)!==-1){alert('Already owned!');return;}
+        if(type==='skin'&&pData.ownedSkins.indexOf(id)!==-1){alert('Already owned!');return;}
+        if(!confirm('Buy '+id+' for '+price+' gold?'))return;
+        pData.gold-=price;
+        if(type==='class') pData.ownedClasses.push(id);
+        if(type==='skin')  pData.ownedSkins.push(id);
+        savePData(); refreshClassCards(); refreshShopOwned();
+        alert('✅ Purchased! '+id+' unlocked!');
     }
 
-    // Buy item from shop
-    function buyItem(type, id, price) {
-        if (playerData.gold < price) {
-            alert('Not enough gold! You need ' + price + ' gold. Earn gold by killing enemies!');
-            return;
-        }
-        if (type === 'class' && playerData.ownedClasses.indexOf(id) !== -1) {
-            alert('You already own this class!'); return;
-        }
-        if (type === 'skin' && playerData.ownedSkins.indexOf(id) !== -1) {
-            alert('You already own this skin!'); return;
-        }
-        if (!confirm('Buy ' + (type === 'class' ? id : 'skin') + ' for ' + price + ' gold?')) return;
-
-        playerData.gold -= price;
-        if (type === 'class') playerData.ownedClasses.push(id);
-        if (type === 'skin')  playerData.ownedSkins.push(id);
-        savePlayerData();
-        updateClassCards();
-        updateShopOwned();
-        alert('✅ Purchased! ' + (type === 'class' ? id + ' is now unlocked!' : 'New skin unlocked!'));
+    // Screens
+    function showScreen(id){
+        document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+        var el=document.getElementById(id);if(el)el.classList.add('active');
     }
-
-    // Screen management
-    function showScreen(id) {
-        document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
-        document.getElementById(id).classList.add('active');
-    }
-    function openShop()       { showScreen('shopScreen'); }
-    function closeShop()      { showScreen('mainMenu'); }
-    function openShopInGame() { showScreen('shopScreen'); }
-
-    // Shop tabs
-    function showShopTab(tab) {
-        document.querySelectorAll('.shopTab').forEach(function(t) { t.classList.remove('active'); });
-        document.getElementById('tab-'+tab).classList.add('active');
-        document.getElementById('shopClasses').style.display = tab === 'classes' ? 'grid' : 'none';
-        document.getElementById('shopSkins').style.display   = tab === 'skins'   ? 'grid' : 'none';
+    function openShop(){ refreshGoldUI(); showScreen('shopScreen'); }
+    function closeShop(){ refreshGoldUI(); showScreen('mainMenu'); }
+    function shopTab(tab){
+        document.querySelectorAll('.shopTab').forEach(function(t){t.classList.remove('active');});
+        var t=document.getElementById('tab-'+tab);if(t)t.classList.add('active');
+        var sc=document.getElementById('shopClasses'),ss=document.getElementById('shopSkins');
+        if(sc)sc.style.display=tab==='classes'?'grid':'none';
+        if(ss)ss.style.display=tab==='skins'?'grid':'none';
     }
 
     // Class selection
-    function selectClass(cls) {
-        if (playerData.ownedClasses.indexOf(cls) === -1) {
-            var prices = {mage:200,rogue:300,paladin:400,necromancer:500,berserker:600,ranger:700};
-            alert('🔒 ' + cls + ' is locked! Buy it in the Shop for ' + prices[cls] + ' Gold.');
-            return;
+    function pickClass(cls){
+        // Premium classes need purchase
+        var premium=['druid','assassin','warlord','archmage'];
+        var prices={druid:300,assassin:400,warlord:500,archmage:600};
+        if(premium.indexOf(cls)!==-1&&pData.ownedClasses.indexOf(cls)===-1){
+            alert('🔒 '+cls+' costs '+prices[cls]+' gold. Buy it in the Shop!');return;
         }
-        window._selectedClass = cls;
-        document.querySelectorAll('.classCard').forEach(function(c) { c.classList.remove('selected'); });
-        var card = document.getElementById('card-'+cls);
-        if (card) card.classList.add('selected');
+        window._cls=cls;
+        document.querySelectorAll('.classCard').forEach(function(c){c.classList.remove('selected');});
+        var card=document.getElementById('card-'+cls);if(card)card.classList.add('selected');
     }
 
     // Mode selection
-    function selectMode(mode) {
-        window._selectedMode = mode;
-        document.querySelectorAll('.modeCard').forEach(function(c) { c.classList.remove('selected'); });
-        var card = document.getElementById('mode-'+mode);
-        if (card) card.classList.add('selected');
+    function selectMode(mode){
+        window._mode=mode;
+        document.querySelectorAll('.modeCard').forEach(function(c){c.classList.remove('selected');});
+        var card=document.getElementById('mode-'+mode);if(card)card.classList.add('selected');
     }
 
     // Skin selection
-    function selectSkin(id, cssColor, hexColor) {
-        if (playerData.ownedSkins.indexOf(String(id)) === -1) {
-            alert('🔒 Buy this skin in the Shop!'); return;
-        }
-        window._selectedSkin = id;
-        window._selectedSkinColor = hexColor;
-        document.querySelectorAll('.skinSwatch').forEach(function(s) { s.classList.remove('selected'); });
-        var sw = document.getElementById('skin-'+id);
-        if (sw) sw.classList.add('selected');
+    function pickSkin(idx,hexColor){
+        if(idx>=8&&pData.ownedSkins.indexOf(String(idx))===-1){alert('🔒 Buy this skin in the Shop!');return;}
+        window._skinIdx=idx; window._skinColor=hexColor;
+        document.querySelectorAll('.skinSwatch').forEach(function(s){s.classList.remove('selected');});
+        var sw=document.getElementById('sw-'+idx);if(sw)sw.classList.add('selected');
     }
 
-    // Lobby system
-    function generateCode() {
-        var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-        var code = '';
-        for (var i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
-        return code;
+    // Lobby
+    function createLobby(){
+        var chars='ABCDEFGHJKLMNPQRSTUVWXYZ2345678';
+        var code='';for(var i=0;i<4;i++)code+=chars[Math.floor(Math.random()*chars.length)];
+        window._room=code;
+        var li=document.getElementById('lobbyInput');if(li)li.value=code;
+        var rd=document.getElementById('roomDisplay');if(rd)rd.textContent='Code: '+code;
+        alert('✅ Lobby created! Share code: '+code);
+    }
+    function joinLobby(){
+        var li=document.getElementById('lobbyInput');if(!li)return;
+        var code=li.value.trim().toUpperCase();
+        if(code.length===4){window._room=code;var rd=document.getElementById('roomDisplay');if(rd)rd.textContent='✅ Joining: '+code;}
+        else alert('Enter a 4-letter code!');
     }
 
-    function createPrivateLobby() {
-        var code = generateCode();
-        window._roomCode = code;
-        document.getElementById('lobbyCodeInput').value = code;
-        document.getElementById('roomCodeDisplay').textContent = 'Your code: ' + code;
-        alert('✅ Private lobby created!\nShare code: ' + code + '\nFriends should enter this code and click "Join Lobby"');
-    }
-
-    function joinWithCode() {
-        var code = document.getElementById('lobbyCodeInput').value.trim().toUpperCase();
-        if (code.length === 4) {
-            window._roomCode = code;
-            document.getElementById('roomCodeDisplay').textContent = '✅ Will join lobby: ' + code;
-        } else {
-            alert('Please enter a 4-letter lobby code!');
-        }
-    }
-
-    // Touch handlers
-    function handleTouchAttack()  { if (window._doAttack)  window._doAttack(); }
-    function handleTouchAbility() { if (window._doAbility) window._doAbility(); }
-    function handleTouchPotion()  { if (window._doPotion)  window._doPotion(); }
+    // Touch handlers — safe calls
+    function handleAttack() { if(window._doAttack)  window._doAttack(); }
+    function handleAbility(){ if(window._doAbility) window._doAbility(); }
+    function handlePotion() { if(window._doPotion)  window._doPotion(); }
 
     // Start button
-    document.getElementById('startBtn').onclick = function() {
-        var v = document.getElementById('nameInput').value.trim();
-        if (v) window._playerName = v;
+    document.getElementById('startBtn').onclick = function(){
+        var ni=document.getElementById('nameInput');
+        if(ni&&ni.value.trim()) window._pName=ni.value.trim();
 
-        document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+        // Hide all screens
+        document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
 
-        function show(id) { var el = document.getElementById(id); if (el) el.style.display = 'block'; }
-        function showFlex(id) { var el = document.getElementById(id); if (el) el.style.display = 'flex'; }
+        // Helper — safe show
+        function show(id){ var el=document.getElementById(id);if(el)el.style.display='block'; }
+        function showFlex(id){ var el=document.getElementById(id);if(el)el.style.display='flex'; }
 
         show('chatBox'); show('playerCount'); show('minimap');
-        show('questPanel'); show('gameModeHUD'); show('goldHUD');
-        showFlex('shopHudBtn');
+        show('questPanel'); show('modeHUD'); show('goldHUD');
 
-        var modeLabels = { adventure:'🌲 Adventure', survival:'🔥 Survival', bossrush:'💀 Boss Rush', pvp:'⚔️ PvP Arena' };
-        var mi = document.getElementById('gameModeHUD');
-        if (mi) mi.textContent = modeLabels[window._selectedMode] || '🌲 Adventure';
+        var mLabels={adventure:'🌲 Adventure',survival:'🔥 Survival',bossrush:'💀 Boss Rush',pvp:'⚔️ PvP'};
+        var mh=document.getElementById('modeHUD');if(mh)mh.textContent=mLabels[window._mode]||'🌲 Adventure';
+        if(window._mode==='adventure'){show('dimensionHUD');}
+        if(window._mode==='survival'){show('waveHUD');}
 
-        if (window._selectedMode === 'adventure') show('dimensionIndicator');
-        if (window._selectedMode === 'survival') show('waveHUD');
-
-        if (navigator.maxTouchPoints > 1 || /Mobile|iPhone|iPad|Android/i.test(navigator.userAgent)) {
+        var mob=/Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent)||navigator.maxTouchPoints>1;
+        if(mob){
             show('joystickZone'); showFlex('actionButtons');
-            var i2 = document.getElementById('abilityIcon2');
-            // Will be set in game.js
         } else {
             showFlex('abilityBar'); show('attackHint');
-            setTimeout(function() {
-                var h = document.getElementById('attackHint');
-                if (h) { h.style.transition = 'opacity 1s'; h.style.opacity = '0'; setTimeout(function() { if (h) h.style.display = 'none'; }, 1000); }
-            }, 4000);
+            setTimeout(function(){
+                var h=document.getElementById('attackHint');
+                if(h){h.style.transition='opacity 1s';h.style.opacity='0';setTimeout(function(){if(h)h.style.display='none';},1000);}
+            },4000);
         }
 
-        window.gameStarted = true;
+        window.gameStarted=true;
     };
 
-    document.getElementById('nameInput').onkeydown = function(e) { if (e.key === 'Enter') document.getElementById('startBtn').click(); };
+    document.getElementById('nameInput').onkeydown=function(e){if(e.key==='Enter')document.getElementById('startBtn').click();};
 
-    // Load player data on page load
-    loadPlayerData();
+    loadPData();
 </script>
 <script src="src/game.js"></script>
 </body>
