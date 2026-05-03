@@ -1,7 +1,7 @@
 // ================================
-// PIXEL WORLD RPG — All Fixed!
-// 8 free classes + 4 premium
-// All null checks added
+// PIXEL WORLD RPG — Big Update!
+// 18 classes (11 free + 7 premium)
+// Story Mode, PvP fix, accessories
 // ================================
 
 var isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -17,27 +17,35 @@ var config = {
 var game = new Phaser.Game(config);
 
 // ================================
-// ALL 12 CLASSES (8 free + 4 premium)
+// ALL 18 CLASSES (11 free + 7 premium)
 // ================================
 var CLASSES = {
-    warrior:    { name:'Warrior',    icon:'⚔️',  hp:220, speed:155, damage:35, range:80,  ability:'Shield Bash',   abilityIcon:'🛡️', cd:5000,  atk:700 },
-    archer:     { name:'Archer',     icon:'🏹',  hp:110, speed:285, damage:28, range:200, ability:'Arrow Rain',    abilityIcon:'🏹', cd:4000,  atk:500 },
-    mage:       { name:'Mage',       icon:'🧙',  hp:80,  speed:200, damage:70, range:150, ability:'Fireball',      abilityIcon:'🔥', cd:6000,  atk:900 },
-    rogue:      { name:'Rogue',      icon:'🗡️', hp:110, speed:265, damage:50, range:70,  ability:'Vanish',        abilityIcon:'👁️',cd:8000,  atk:400 },
-    paladin:    { name:'Paladin',    icon:'⚜️', hp:180, speed:155, damage:28, range:90,  ability:'Holy Aura',     abilityIcon:'✨', cd:7000,  atk:800 },
-    necromancer:{ name:'Necromancer',icon:'💀',  hp:90,  speed:195, damage:40, range:130, ability:'Raise Dead',    abilityIcon:'☠️', cd:9000,  atk:800 },
-    berserker:  { name:'Berserker',  icon:'🪓',  hp:180, speed:195, damage:55, range:85,  ability:'Berserk Rage',  abilityIcon:'😤', cd:10000, atk:500 },
-    ranger:     { name:'Ranger',     icon:'🌿',  hp:130, speed:245, damage:32, range:160, ability:'Wolf Pack',     abilityIcon:'🐺', cd:12000, atk:600 },
-    // PREMIUM CLASSES
-    druid:      { name:'Druid',      icon:'🌙',  hp:150, speed:215, damage:38, range:120, ability:'Nature Heal',   abilityIcon:'🌿', cd:6000,  atk:650 },
-    assassin:   { name:'Assassin',   icon:'🥷',  hp:100, speed:310, damage:60, range:75,  ability:'Chain Strike',  abilityIcon:'⚡', cd:5000,  atk:350 },
-    warlord:    { name:'Warlord',    icon:'👑',  hp:200, speed:170, damage:45, range:95,  ability:'Rally Army',    abilityIcon:'⚔️', cd:8000,  atk:750 },
-    archmage:   { name:'Archmage',   icon:'🔮',  hp:70,  speed:185, damage:90, range:200, ability:'Meteor Strike', abilityIcon:'💥', cd:12000, atk:1000 }
+    // FREE CLASSES
+    warrior:    { name:'Warrior',     icon:'⚔️',  hp:220, speed:155, damage:35, range:80,  ability:'Shield Bash',    abilityIcon:'🛡️', cd:5000,  atk:700 },
+    archer:     { name:'Archer',      icon:'🏹',  hp:110, speed:285, damage:28, range:200, ability:'Arrow Rain',     abilityIcon:'🏹', cd:4000,  atk:500 },
+    mage:       { name:'Mage',        icon:'🧙',  hp:80,  speed:200, damage:70, range:150, ability:'Fireball',       abilityIcon:'🔥', cd:6000,  atk:900 },
+    rogue:      { name:'Rogue',       icon:'🗡️', hp:110, speed:265, damage:50, range:70,  ability:'Vanish',         abilityIcon:'👁️',cd:8000,  atk:400 },
+    paladin:    { name:'Paladin',     icon:'⚜️', hp:180, speed:155, damage:28, range:90,  ability:'Holy Aura',      abilityIcon:'✨', cd:7000,  atk:800 },
+    necromancer:{ name:'Necromancer', icon:'💀',  hp:90,  speed:195, damage:40, range:130, ability:'Raise Dead',     abilityIcon:'☠️', cd:9000,  atk:800 },
+    berserker:  { name:'Berserker',   icon:'🪓',  hp:180, speed:195, damage:55, range:85,  ability:'Berserk Rage',   abilityIcon:'😤', cd:10000, atk:500 },
+    ranger:     { name:'Ranger',      icon:'🌿',  hp:130, speed:245, damage:32, range:160, ability:'Wolf Pack',      abilityIcon:'🐺', cd:12000, atk:600 },
+    // NEW FREE CLASSES
+    knight:     { name:'Knight',      icon:'🛡️', hp:260, speed:138, damage:40, range:88,  ability:'Charge',         abilityIcon:'💨', cd:6000,  atk:700 },
+    monk:       { name:'Monk',        icon:'🥊',  hp:125, speed:278, damage:28, range:62,  ability:'Combo Strike',   abilityIcon:'👊', cd:4000,  atk:280 },
+    shaman:     { name:'Shaman',      icon:'⚡',  hp:98,  speed:195, damage:58, range:145, ability:'Lightning Storm',abilityIcon:'🌩️',cd:7000,  atk:880 },
+    // PREMIUM CLASSES — unlockable in shop
+    druid:      { name:'Druid',       icon:'🌙',  hp:150, speed:215, damage:38, range:120, ability:'Nature Heal',    abilityIcon:'🌿', cd:6000,  atk:650 },
+    assassin:   { name:'Assassin',    icon:'🥷',  hp:100, speed:310, damage:60, range:75,  ability:'Chain Strike',   abilityIcon:'⚡', cd:5000,  atk:350 },
+    warlord:    { name:'Warlord',     icon:'👑',  hp:200, speed:170, damage:45, range:95,  ability:'Rally Army',     abilityIcon:'⚔️', cd:8000,  atk:750 },
+    archmage:   { name:'Archmage',    icon:'🔮',  hp:70,  speed:185, damage:90, range:200, ability:'Meteor Strike',  abilityIcon:'💥', cd:12000, atk:1000},
+    // NEW PREMIUM CLASSES
+    vampire:    { name:'Vampire',     icon:'🧛',  hp:135, speed:228, damage:44, range:78,  ability:'Blood Drain',    abilityIcon:'🩸', cd:8000,  atk:550 },
+    gunslinger: { name:'Gunslinger',  icon:'🔫',  hp:108, speed:258, damage:40, range:225, ability:'Bullet Storm',   abilityIcon:'💥', cd:5500,  atk:420 },
+    bard:       { name:'Bard',        icon:'🎵',  hp:102, speed:208, damage:24, range:115, ability:'Battle Hymn',    abilityIcon:'🎶', cd:9000,  atk:720 }
 };
 
 // ================================
 // MONSTER POOLS per mode
-// PvP = EMPTY (fix 1)
 // ================================
 var POOL_ADV = {
     goblin:   { name:'👹 Goblin',   color:0xff4444, size:36, hp:30,  speed:80,  dmg:8,  xp:20, score:10, gold:5  },
@@ -57,7 +65,7 @@ var POOL_BRS = {
     boneknight:{ name:'⚔️ Bone Knight',color:0xbbbbbb,size:44,hp:85,speed:60, dmg:25,xp:48,score:32,gold:16 },
     voidcreep: { name:'🌑 Void Creep', color:0x110033,size:40,hp:55,speed:105,dmg:22,xp:42,score:30,gold:14 }
 };
-var POOL_PVP = {}; // FIX 1: no mobs in pvp!
+var POOL_PVP = {}; // no mobs in pvp!
 var POOL_SHADOW = {
     wraith:  { name:'👻 Wraith', color:0x8888ff,size:38,hp:55,speed:125,dmg:20,xp:42,score:32,gold:15 },
     vampire: { name:'🧛 Vampire',color:0xaa0044,size:42,hp:75,speed:88, dmg:28,xp:55,score:44,gold:20 },
@@ -66,7 +74,7 @@ var POOL_SHADOW = {
 };
 
 // ================================
-// BOSSES per mode (fix 2)
+// BOSSES per mode
 // ================================
 var BOSS_ADV = { name:'🐉 Dragon King', bc:0x660000, ec:0xff0000, mc:0xffff00, bar:0xff0000, hp:600, speed:55, xp:400, gold:200 };
 var BOSS_SRV = { name:'🌋 Lava Titan',  bc:0xff4400, ec:0xffff00, mc:0xff8800, bar:0xff6600, hp:400, speed:45, xp:300, gold:150 };
@@ -93,6 +101,55 @@ var QUESTS = [
 ];
 
 // ================================
+// STORY MODE DATA
+// ================================
+var STORY_DATA = [
+    {
+        num:1, title:'📖 Chapter 1: A Hero\'s Call', color:'#88ff88',
+        npcId:'elder',
+        dialog:[
+            {speaker:'👴 Elder Oaken', text:'"Welcome, brave hero! Dark times are upon us. Goblin raiders attack our village every night..."'},
+            {speaker:'👴 Elder Oaken', text:'"Please — defeat 8 goblins and 3 trolls to drive them away. The forest will be yours to explore safely again!"'},
+            {speaker:'👴 Elder Oaken', text:'"Return to me when you are done. Courage, hero! ⚔️"'}
+        ],
+        objectives:[
+            {id:'kill_goblin', desc:'Kill 8 Goblins',  type:'kill', monster:'goblin', target:8, n:0, done:false},
+            {id:'kill_troll',  desc:'Kill 3 Trolls',   type:'kill', monster:'troll',  target:3, n:0, done:false}
+        ],
+        reward:200, rewardMsg:'🌟 Village saved! Elder Oaken gives you 200 gold!'
+    },
+    {
+        num:2, title:'📖 Chapter 2: Shadows Stir', color:'#cc88ff',
+        npcId:'scout',
+        dialog:[
+            {speaker:'🏕️ Scout Finn', text:'"Something evil stirs near the shadow portal to the south-east. I can feel it..."'},
+            {speaker:'🏕️ Scout Finn', text:'"The Shadow Wraith is corrupting the realm! Enter the portal and fight through the shadow enemies!"'},
+            {speaker:'🏕️ Scout Finn', text:'"Defeat the Shadow Wraith before it escapes into our world. Be careful — it\'s powerful! 💀"'}
+        ],
+        objectives:[
+            {id:'enter_shadow', desc:'Enter the Shadow Portal', type:'event', key:'shadow_entered', target:1, n:0, done:false},
+            {id:'shadow_kills', desc:'Defeat 5 Shadow Enemies', type:'shadow_kill', target:5, n:0, done:false},
+            {id:'shadow_boss',  desc:'Defeat the Shadow Wraith',type:'boss', target:1, n:0, done:false}
+        ],
+        reward:300, rewardMsg:'🌟 Shadows retreat! Scout Finn cheers — +300 gold!'
+    },
+    {
+        num:3, title:'📖 Chapter 3: Dragon\'s Wrath', color:'#ffaa44',
+        npcId:'blacksmith',
+        dialog:[
+            {speaker:'⚒️ Blacksmith Bram', text:'"I have felt the ground shake — the Dragon King has awakened in the heart of the forest!"'},
+            {speaker:'⚒️ Blacksmith Bram', text:'"I forged you a legendary blade from dragon-steel. You\'re the only one strong enough!"'},
+            {speaker:'⚒️ Blacksmith Bram', text:'"Go to the center of the forest and end this once and for all. The whole realm is counting on you! 🐉🔥"'}
+        ],
+        objectives:[
+            {id:'reach_lair',  desc:'Dragon King appears!',   type:'auto', target:1, n:0, done:false},
+            {id:'kill_dragon', desc:'Defeat the Dragon King', type:'boss', target:1, n:0, done:false}
+        ],
+        reward:1000, rewardMsg:'🏆 LEGENDARY VICTORY! Dragon King defeated! You earn the title: Dragon Slayer!'
+    }
+];
+
+// ================================
 // GAME STATE
 // ================================
 var scene,player,cursors,wasd,shiftKey;
@@ -102,7 +159,7 @@ var boss=null,bossHPBar,bossHPBg,bossTxt;
 var bossSpawned=false;
 var gameStarted=false;
 var selectedClass='warrior',selectedMode='adventure';
-var pClass; // player class def
+var pClass;
 var skinColor=0x4488ff;
 var playerFacing=1;
 var otherPlayers={};
@@ -114,7 +171,7 @@ var pName='Hero';
 var inv=[],invOpen=false,chatOpen=false;
 var invisible=false,berserking=false;
 var stamina=100,maxSta=100,staminaBar;
-var dim=0; // 0=normal,1=shadow
+var dim=0;
 var inShadow=false;
 var dimOverlay,nightOverlay;
 var shadowTiles=[],normalTiles=[],portalCD=false;
@@ -129,6 +186,20 @@ var myId=null,myRef=null,playersRef=null,chatRef=null,tombsRef=null,pvpRef=null;
 var lastSent=0;
 var wave=0,waveTotal=0,waveKilled=0;
 var rushIdx=0;
+
+// Story mode state
+var storyMode=false;
+var storyChapter=0;
+var storyNPCList=[];
+var storyNearNPC=null;
+var storyNPCPrompt=null;
+var storyObjProgress=[];
+var storyDialogActive=false;
+var storyShadowKills=0;
+var storyChapterComplete=false;
+var storyDone=false;
+var storyLairTriggered=false;
+var accessoryOverlay=null;
 
 // ================================
 // SOUNDS
@@ -147,11 +218,12 @@ var S={
     boss: function(){tone(100,0.5,'sawtooth');setTimeout(function(){tone(80,0.5,'sawtooth');},300);},
     wave: function(){tone(440,0.1,'sine');setTimeout(function(){tone(550,0.1,'sine');},100);setTimeout(function(){tone(660,0.2,'sine');},200);},
     over: function(){tone(400,0.4,'sine');setTimeout(function(){tone(350,0.4,'sine');},400);setTimeout(function(){tone(200,0.8,'sine');},1600);},
-    gold: function(){tone(700,0.05,'sine');setTimeout(function(){tone(900,0.1,'sine');},60);}
+    gold: function(){tone(700,0.05,'sine');setTimeout(function(){tone(900,0.1,'sine');},60);},
+    story:function(){tone(440,0.1,'sine');setTimeout(function(){tone(660,0.15,'sine');},120);setTimeout(function(){tone(880,0.2,'sine');},260);setTimeout(function(){tone(1100,0.3,'sine');},420);}
 };
 
 // ================================
-// SAFE DOM HELPER — fixes null error!
+// SAFE DOM HELPERS
 // ================================
 function el(id){ return document.getElementById(id); }
 function setText(id,txt){ var e=el(id);if(e)e.textContent=txt; }
@@ -248,7 +320,6 @@ function connectServer(){
         myRef.set({id:myId,name:pClass.icon+' '+pName,x:400,y:300,dim:0,cls:selectedClass,skin:skinColor,hp:pH,maxHp:pMaxH,alive:true});
         myRef.onDisconnect().remove();
 
-        // Others join
         playersRef.on('child_added',function(snap){
             var d=snap.val();if(!d||d.id===myId)return;
             addOtherPlayer(d);
@@ -256,19 +327,16 @@ function connectServer(){
             countOnline();
         });
 
-        // FIX 3+7: sync health + dimension visibility
         playersRef.on('child_changed',function(snap){
             var d=snap.val();if(!d||d.id===myId)return;
             var op=otherPlayers[d.id];if(!op)return;
             op.tx=d.x; op.ty=d.y;
             op.dim=d.dim||0;
-            // FIX 7: visibility = same dimension
             var vis=(d.dim||0)===dim;
             if(op.sprite) op.sprite.setVisible(vis);
             if(op.tag)    op.tag.setVisible(vis);
             if(op.hpBar)  op.hpBar.setVisible(vis);
             if(op.hpBg)   op.hpBg.setVisible(vis);
-            // FIX 3: update their HP bar
             if(op.hpBar&&d.maxHp>0){
                 op.hpBar.width=40*(d.hp/d.maxHp);
                 op.hpBar.setFillStyle(d.hp/d.maxHp>0.5?0x22cc22:0xff4444);
@@ -291,20 +359,23 @@ function connectServer(){
             addMsg(d.name,d.msg,'#ffffff');
         });
 
-        // FIX 6: receive PvP damage
+        // Receive PvP damage
         pvpRef.on('child_added',function(snap){
             var d=snap.val();if(!d||d.tid!==myId)return;
             if(!gameStarted||!player||!player.active)return;
             var now=Date.now();if(now-lastHit<500)return;lastHit=now;
             pH-=d.dmg; S.hit();
             if(scene)scene.cameras.main.shake(200,0.008);
-            if(player){player.setTint(0xff0000);scene.time.delayedCall(200,function(){player.clearTint();});}
-            updateHP(); float('-'+d.dmg+' ⚔️PvP',player.x,player.y-50,'#ff44ff');
+            if(player){
+                player.setTint(0xff0000);
+                scene.time.delayedCall(200,function(){player.clearTint();});
+            }
+            updateHP();
+            if(player)float('-'+d.dmg+' ⚔️PvP',player.x,player.y-50,'#ff44ff');
             if(pH<=0){pH=0;updateHP();showGameOver();}
             snap.ref.remove();
         });
 
-        // Tombstones — FIX 10: mode-tagged
         tombsRef.once('value',function(snap){ snap.forEach(function(c){var t=c.val();if(t&&t.mode===selectedMode)addTombVis(t.x,t.y,t.name,t.level,'#ffaaaa');}); });
         tombsRef.on('child_added',function(snap){ var t=snap.val();if(!t||t.sid===myId||t.mode!==selectedMode)return;addTombVis(t.x,t.y,t.name,t.level,'#ffaaaa');addMsg('System','💀 '+t.name+' fell!','#ff8888'); });
 
@@ -338,7 +409,6 @@ function sendPos(){
     myRef.update({x:Math.floor(player.x),y:Math.floor(player.y),dim:dim,hp:Math.floor(pH),maxHp:pMaxH});
 }
 
-// FIX 6: send real PvP damage
 function pvpHit(tid,dmg){
     if(!pvpRef)return;
     pvpRef.push({tid:tid,dmg:dmg,aid:myId,t:Date.now()});
@@ -352,6 +422,7 @@ function startGame(){
     selectedMode  = window._mode || 'adventure';
     pName         = window._pName|| 'Hero';
     skinColor     = window._skinColor||0x4488ff;
+    storyMode     = (selectedMode==='story');
 
     pClass   = CLASSES[selectedClass];
     pMaxH    = pClass.hp;
@@ -362,28 +433,32 @@ function startGame(){
 
     if(typeof pData!=='undefined') gold=pData.gold||0;
 
-    // Set pool — FIX 1: PvP empty
-    curPool = selectedMode==='adventure'?POOL_ADV : selectedMode==='survival'?POOL_SRV : selectedMode==='bossrush'?POOL_BRS : POOL_PVP;
+    // Set monster pool
+    if(selectedMode==='adventure'||selectedMode==='story') curPool=POOL_ADV;
+    else if(selectedMode==='survival') curPool=POOL_SRV;
+    else if(selectedMode==='bossrush') curPool=POOL_BRS;
+    else curPool=POOL_PVP;
 
-    // Register safe touch callbacks
+    // Register touch callbacks
     window._doAttack  = function(){ doAtk(); };
     window._doAbility = function(){ doAbi(); };
     window._doPotion  = function(){ doPot(); };
 
     buildMap();
-    makeTex('playerTex',skinColor);
+    makeTex('playerTex',skinColor,window._accessory||'none');
     makeAllMonsterTex();
     makeOtherTex();
     makePotionTex();
     makeTombTex();
     makeExtraTex();
+    makeNPCTextures();
 
     createPlayer();
     enemies=scene.physics.add.group();
     potions=scene.physics.add.group();
 
-    // FIX 5: portals only in adventure
-    if(selectedMode==='adventure'){
+    // Portals only in adventure + story
+    if(selectedMode==='adventure'||selectedMode==='story'){
         buildPortals();
         scene.physics.add.overlap(player,portals,onPortal,null,scene);
     }
@@ -392,12 +467,13 @@ function startGame(){
     else if(selectedMode==='survival') modeSrv();
     else if(selectedMode==='bossrush') modeBRS();
     else if(selectedMode==='pvp')      modePvp();
+    else if(selectedMode==='story')    modeStory();
 
     setupCam();
     setupKeys();
     buildUI();
     buildInv();
-    if(selectedMode==='adventure')startDayNight();
+    if(selectedMode==='adventure'||selectedMode==='story') startDayNight();
     startSurvTimer();
     setupJoystick();
     connectServer();
@@ -406,28 +482,42 @@ function startGame(){
     scene.physics.add.overlap(player,potions,onPickPotion,null,scene);
     scene.cameras.main.setBackgroundColor(bgCol());
 
-    // Set ability icons — with null checks
     var ai=el('abilityIcon');if(ai)ai.textContent=pClass.abilityIcon;
     var ai2=el('abilityIcon2');if(ai2)ai2.textContent=pClass.abilityIcon;
+
+    // Accessory overlay
+    if(window._accessory&&window._accessory!=='none'){
+        var accIcons={crown:'👑',hood:'🪖',wizard:'🧙',halo:'😇',horns:'😈',mask:'🎭',ears:'🐱',cape:'🦸'};
+        var ico=accIcons[window._accessory]||'';
+        if(ico){
+            accessoryOverlay=scene.add.text(0,0,ico,{fontSize:'20px'}).setOrigin(0.5,1).setDepth(12);
+        }
+    }
+
+    // Story mode panel
+    if(storyMode){
+        show('storyPanel');
+        beginStoryChapter(1);
+    }
+
     gameStarted=true;
 }
 
 function bgCol(){
-    var m={adventure:'#1a5c1a',survival:'#3d1a00',bossrush:'#0d0011',pvp:'#1a1a22'};
+    var m={adventure:'#1a5c1a',survival:'#3d1a00',bossrush:'#0d0011',pvp:'#1a1a22',story:'#1a5c1a'};
     return m[selectedMode]||'#1a5c1a';
 }
 
 // ================================
-// BUILD MAP — FIX 2: genuinely different layouts
+// BUILD MAP
 // ================================
 function buildMap(){
-    if(selectedMode==='adventure')     buildForest();
+    if(selectedMode==='adventure'||selectedMode==='story') buildForest();
     else if(selectedMode==='survival') buildLava();
     else if(selectedMode==='bossrush') buildDungeon();
     else if(selectedMode==='pvp')      buildArena();
 
-    // FIX 5: shadow realm only in adventure
-    if(selectedMode==='adventure'){
+    if(selectedMode==='adventure'||selectedMode==='story'){
         for(var sx=0;sx<mW;sx++) for(var sy=0;sy<mH;sy++)
             shadowTiles.push(scene.add.rectangle(sx*tSz+tSz/2,sy*tSz+tSz/2,tSz-1,tSz-1,(sx+sy)%2===0?0x1a0033:0x110022).setVisible(false));
         [{x:3,y:3},{x:9,y:6},{x:14,y:2},{x:19,y:9}].forEach(function(p){
@@ -437,15 +527,17 @@ function buildMap(){
     }
     nightOverlay=scene.add.rectangle(0,0,mW*tSz,mH*tSz,0x000033,0).setOrigin(0,0).setDepth(5);
     dimOverlay  =scene.add.rectangle(0,0,mW*tSz,mH*tSz,0x220044,0).setOrigin(0,0).setDepth(4);
+
+    // Story NPCs (after map is built)
+    if(storyMode) spawnStoryNPCs();
 }
 
-// ADVENTURE: Forest with river, cross path, campfires, cave
+// ADVENTURE / STORY: Forest map
 function buildForest(){
     for(var x=0;x<mW;x++) for(var y=0;y<mH;y++){
         var c=(x===14||(y===14&&x>4&&x<24))?0x8B6914:((x+y)%2===0?0x2d8a2d:0x267326);
         normalTiles.push(scene.add.rectangle(x*tSz+tSz/2,y*tSz+tSz/2,tSz-1,tSz-1,c));
     }
-    // River (right side, flowing down)
     for(var i=0;i<mH;i++){
         var rx=20+Math.floor(i*0.3); if(rx<mW){
             var rv=scene.add.rectangle(rx*tSz+tSz/2,i*tSz+tSz/2,tSz*2,tSz,0x1155aa);
@@ -453,14 +545,12 @@ function buildForest(){
             normalTiles.push(rv);
         }
     }
-    // Tree clusters
     [{x:1,y:1},{x:2,y:1},{x:3,y:2},{x:4,y:1},{x:5,y:2},{x:1,y:3},{x:22,y:1},{x:23,y:2},{x:24,y:1},{x:25,y:2},{x:1,y:13},{x:2,y:14},{x:25,y:12},{x:26,y:14},{x:9,y:20},{x:10,y:21},{x:11,y:19}].forEach(function(p){
         var tx=p.x*tSz+tSz/2,ty=p.y*tSz+tSz/2;
         normalTiles.push(scene.add.rectangle(tx,ty,14,28,0x6B3A2A));
         normalTiles.push(scene.add.circle(tx,ty-14,24,0x1a6e1a));
         normalTiles.push(scene.add.circle(tx-7,ty-20,16,0x228822));
     });
-    // Campfires
     [{x:8,y:8},{x:18,y:6}].forEach(function(p){
         var fx=p.x*tSz+tSz/2,fy=p.y*tSz+tSz/2;
         scene.add.rectangle(fx,fy+4,22,8,0x6B3A2A);
@@ -468,17 +558,21 @@ function buildForest(){
         var f2=scene.add.triangle(fx-5,fy-10,-5,6,5,6,0,-8,0xff8800);
         scene.tweens.add({targets:[f1,f2],scaleX:0.85,scaleY:1.15,duration:160,yoyo:true,repeat:-1});
     });
-    // Cave
     for(var i=0;i<3;i++) for(var j=0;j<2;j++)
         normalTiles.push(scene.add.rectangle((1+i)*tSz+tSz/2,(24+j)*tSz+tSz/2,tSz-1,tSz-1,0x222222));
     scene.add.text(2*tSz,24*tSz,'🏔️ Cave',{fontSize:'12px',fill:'#777',stroke:'#000',strokeThickness:2});
+
+    // Story: Village area marker (top-left)
+    if(storyMode){
+        scene.add.rectangle(3*tSz,3*tSz,5*tSz,3*tSz,0x886633,0.15).setOrigin(0,0);
+        scene.add.text(3*tSz+10,3*tSz+6,'🏘️ Village',{fontSize:'13px',fill:'#ffcc88',stroke:'#000',strokeThickness:2});
+    }
 }
 
-// SURVIVAL: Lava fortress with moat, platforms
+// SURVIVAL: Lava fortress
 function buildLava(){
     for(var x=0;x<mW;x++) for(var y=0;y<mH;y++)
         normalTiles.push(scene.add.rectangle(x*tSz+tSz/2,y*tSz+tSz/2,tSz-1,tSz-1,(x+y)%2===0?0x8B3000:0x6B2200));
-    // Lava moat at edges
     for(var x=0;x<mW;x++) for(var y=0;y<mH;y++){
         if(x<2||x>mW-3||y<2||y>mH-3){
             var lv=scene.add.rectangle(x*tSz+tSz/2,y*tSz+tSz/2,tSz-1,tSz-1,0xff3300);
@@ -486,81 +580,113 @@ function buildLava(){
             normalTiles.push(lv);
         }
     }
-    // Stone platforms
     [{x:5,y:5,w:4,h:4},{x:14,y:3,w:5,h:3},{x:20,y:6,w:4,h:4},{x:5,y:18,w:5,h:4},{x:18,y:17,w:4,h:5}].forEach(function(pl){
         for(var px=pl.x;px<pl.x+pl.w;px++) for(var py=pl.y;py<pl.y+pl.h;py++)
             normalTiles.push(scene.add.rectangle(px*tSz+tSz/2,py*tSz+tSz/2,tSz-1,tSz-1,0xcc6600));
     });
-    // Lava pools
     for(var i=0;i<4;i++){
         var lp=scene.add.ellipse(Phaser.Math.Between(8,20)*tSz,Phaser.Math.Between(8,20)*tSz,80+Math.random()*50,50+Math.random()*30,0xff3300);
         scene.tweens.add({targets:lp,fillColor:0xff6600,scaleX:1.05,duration:800,yoyo:true,repeat:-1});
     }
-    // Geysers
     for(var i=0;i<5;i++){
         var gv=scene.add.rectangle(Phaser.Math.Between(4,23)*tSz,Phaser.Math.Between(4,23)*tSz,8,36,0xff6600);
         scene.tweens.add({targets:gv,scaleY:1.8,alpha:0.3,duration:700+Math.random()*400,yoyo:true,repeat:-1});
     }
 }
 
-// BOSS RUSH: Dungeon rooms connected by corridors
+// BOSS RUSH: Dungeon rooms
 function buildDungeon(){
-    // Walls everywhere
     for(var x=0;x<mW;x++) for(var y=0;y<mH;y++)
         normalTiles.push(scene.add.rectangle(x*tSz+tSz/2,y*tSz+tSz/2,tSz-1,tSz-1,0x111122));
-    // Rooms
     [{x:1,y:1,w:8,h:7},{x:12,y:1,w:8,h:7},{x:1,y:13,w:8,h:7},{x:12,y:13,w:8,h:7},{x:6,y:6,w:10,h:8}].forEach(function(r,ri){
         var cols=[0x222233,0x1a1a2e,0x22223a,0x1e1e30,0x2a2a40];
         for(var rx=r.x;rx<r.x+r.w;rx++) for(var ry=r.y;ry<r.y+r.h;ry++)
             normalTiles.push(scene.add.rectangle(rx*tSz+tSz/2,ry*tSz+tSz/2,tSz-1,tSz-1,cols[ri%5]));
         scene.add.text((r.x+1)*tSz,(r.y+1)*tSz,ri===4?'⚔️ Boss Chamber':'Room '+(ri+1),{fontSize:'11px',fill:'#445',stroke:'#000',strokeThickness:1});
     });
-    // Corridors
     for(var i=8;i<13;i++) normalTiles.push(scene.add.rectangle(i*tSz+tSz/2,4*tSz+tSz/2,tSz-1,tSz,0x1c1c2e));
     for(var i=8;i<13;i++) normalTiles.push(scene.add.rectangle(i*tSz+tSz/2,14*tSz+tSz/2,tSz-1,tSz,0x1c1c2e));
     for(var i=8;i<14;i++) normalTiles.push(scene.add.rectangle(4*tSz+tSz/2,i*tSz+tSz/2,tSz,tSz-1,0x1c1c2e));
     for(var i=8;i<14;i++) normalTiles.push(scene.add.rectangle(20*tSz+tSz/2,i*tSz+tSz/2,tSz,tSz-1,0x1c1c2e));
-    // Pillars + purple torches
-    [{x:2,y:2},{x:8,y:2},{x:2,y:8},{x:8,y:8},{x:13,y:2},{x:19,y:2},{x:2,y:14},{x:8,y:14},{x:13,y:14},{x:19,y:14}].forEach(function(p){
-        scene.add.rectangle(p.x*tSz+tSz/2,p.y*tSz+tSz/2,20,56,0x222233);
-    });
     for(var i=0;i<10;i++){
         var tf=scene.add.circle(Phaser.Math.Between(2,25)*tSz,Phaser.Math.Between(2,25)*tSz,10,0xaa00ff,0.8);
         scene.tweens.add({targets:tf,radius:14,alpha:0.4,duration:280+Math.random()*200,yoyo:true,repeat:-1});
     }
 }
 
-// ARENA: Circular colosseum, sand center, spectator stands
+// PVP: Colosseum arena
 function buildArena(){
     for(var x=0;x<mW;x++) for(var y=0;y<mH;y++)
         normalTiles.push(scene.add.rectangle(x*tSz+tSz/2,y*tSz+tSz/2,tSz-1,tSz-1,(x<3||x>mW-4||y<3||y>mH-4)?0x222222:0x333333));
-    // Sand circle center
     var cx=mW/2*tSz,cy=mH/2*tSz,r=8*tSz;
     for(var x=4;x<mW-4;x++) for(var y=4;y<mH-4;y++){
         var dx=(x*tSz+tSz/2)-cx,dy=(y*tSz+tSz/2)-cy;
         if(Math.sqrt(dx*dx+dy*dy)<r)
             normalTiles.push(scene.add.rectangle(x*tSz+tSz/2,y*tSz+tSz/2,tSz-1,tSz-1,(x+y)%2===0?0x998855:0x887744));
     }
-    // Corner towers
     [{x:3,y:3},{x:24,y:3},{x:3,y:24},{x:24,y:24}].forEach(function(p){
         scene.add.rectangle(p.x*tSz+tSz/2,p.y*tSz+tSz/2,40,72,0x888888);
         scene.add.rectangle(p.x*tSz+tSz/2,p.y*tSz+tSz/2,48,18,0x999999);
         var flame=scene.add.circle(p.x*tSz+tSz/2,p.y*tSz+tSz/2-46,9,0xffaa00);
         scene.tweens.add({targets:flame,radius:13,alpha:0.5,duration:280,yoyo:true,repeat:-1});
     });
+    // PvP health bars above arena
     scene.add.text(cx,cy-r-20,'⚔️ PvP ARENA ⚔️',{fontSize:'16px',fill:'#ffaa00',stroke:'#000',strokeThickness:3}).setOrigin(0.5);
+    // Walls/pillars around edge for cover
+    for(var i=0;i<6;i++){
+        var angle=i/6*Math.PI*2;
+        var wx=cx+Math.cos(angle)*(r*0.7),wy=cy+Math.sin(angle)*(r*0.7);
+        var wall=scene.add.rectangle(wx,wy,28,70,0x888888).setRotation(angle);
+        normalTiles.push(wall);
+    }
 }
 
 // ================================
-// TEXTURES — NO fillArc anywhere!
+// TEXTURES
 // ================================
-function makeTex(name,color){
+function makeTex(name,color,accessory){
     var g=scene.make.graphics({x:0,y:0,add:false});
     g.fillStyle(color); g.fillRoundedRect(4,12,32,28,4);
-    g.fillStyle(0xffddaa); g.fillCircle(20,9,12); // fillCircle only!
+    g.fillStyle(0xffddaa); g.fillCircle(20,9,12);
     g.fillStyle(0x000000); g.fillCircle(15,8,3); g.fillCircle(25,8,3);
     g.fillStyle(0xffffff,0.25); g.fillRect(8,16,24,5);
+    // Accessory drawn on texture
+    if(accessory==='crown'){g.fillStyle(0xffdd00);g.fillRect(10,0,20,6);g.fillRect(8,3,4,8);g.fillRect(18,1,4,10);g.fillRect(28,3,4,8);}
+    if(accessory==='halo'){g.lineStyle(3,0xffff88,1);g.strokeCircle(20,-4,14);}
+    if(accessory==='horns'){g.fillStyle(0xff2200);g.fillTriangle(10,-2,14,8,8,8);g.fillTriangle(30,-2,26,8,32,8);}
+    if(accessory==='mask'){g.fillStyle(0x111111,0.8);g.fillRect(8,5,24,10);}
     g.generateTexture(name,44,44); g.destroy();
+}
+
+function makeNPCTextures(){
+    // Elder (purple robe)
+    if(!scene.textures.exists('npcElderTex')){
+        var g=scene.make.graphics({x:0,y:0,add:false});
+        g.fillStyle(0x8833aa); g.fillRoundedRect(4,16,36,30,5);
+        g.fillStyle(0xffddaa); g.fillCircle(22,10,12);
+        g.fillStyle(0xcccccc); g.fillRect(4,12,36,8); // hair/beard
+        g.fillStyle(0x333333); g.fillCircle(17,8,3); g.fillCircle(27,8,3);
+        g.fillStyle(0x6622aa); g.fillTriangle(8,22,10,32,6,32); g.fillTriangle(36,22,34,32,38,32); // robe sides
+        g.generateTexture('npcElderTex',44,48); g.destroy();
+    }
+    // Scout (green outfit)
+    if(!scene.textures.exists('npcScoutTex')){
+        var g=scene.make.graphics({x:0,y:0,add:false});
+        g.fillStyle(0x226622); g.fillRoundedRect(4,16,36,30,5);
+        g.fillStyle(0xffcc88); g.fillCircle(22,10,12);
+        g.fillStyle(0x886600); g.fillRect(12,4,20,8); // cap
+        g.fillStyle(0x333333); g.fillCircle(17,8,3); g.fillCircle(27,8,3);
+        g.generateTexture('npcScoutTex',44,48); g.destroy();
+    }
+    // Blacksmith (red/orange)
+    if(!scene.textures.exists('npcSmithTex')){
+        var g=scene.make.graphics({x:0,y:0,add:false});
+        g.fillStyle(0xaa4400); g.fillRoundedRect(4,16,36,30,5);
+        g.fillStyle(0xffcc88); g.fillCircle(22,10,12);
+        g.fillStyle(0x442211); g.fillCircle(17,8,3); g.fillCircle(27,8,3);
+        g.fillStyle(0x666666); g.fillRect(8,20,28,4); // apron
+        g.generateTexture('npcSmithTex',44,48); g.destroy();
+    }
 }
 
 function makeMonsterTex(name,color,size){
@@ -608,6 +734,7 @@ function makeTombTex(){
 function makeExtraTex(){
     if(!scene.textures.exists('minionTex')){ var g=scene.make.graphics({x:0,y:0,add:false}); g.fillStyle(0xdddddd); g.fillRoundedRect(5,10,22,24,4); g.fillStyle(0xeeeeee); g.fillCircle(16,8,9); g.generateTexture('minionTex',32,36); g.destroy(); }
     if(!scene.textures.exists('wolfTex')){ var g=scene.make.graphics({x:0,y:0,add:false}); g.fillStyle(0x886644); g.fillEllipse(16,16,30,22); g.fillStyle(0x775533); g.fillCircle(26,10,10); g.generateTexture('wolfTex',36,32); g.destroy(); }
+    if(!scene.textures.exists('bulletTex')){ var g=scene.make.graphics({x:0,y:0,add:false}); g.fillStyle(0xffcc00); g.fillCircle(8,8,6); g.generateTexture('bulletTex',16,16); g.destroy(); }
 }
 
 function createPlayer(){
@@ -618,7 +745,7 @@ function createPlayer(){
 }
 
 // ================================
-// PORTALS — FIX 4: return portal hidden until in shadow
+// PORTALS
 // ================================
 var shadowPortGfx, returnPortGfx, returnPortBody, returnPortLabel;
 
@@ -664,11 +791,12 @@ function enterShadow(){
     setText('dimensionHUD','🌑 Shadow Realm');
     var dh=el('dimensionHUD');if(dh)dh.style.color='#cc88ff';
     float('🌑 Shadow Realm!',player.x-100,player.y-80,'#cc88ff');
-    // FIX 4: show return portal now
     if(returnPortBody)returnPortBody.active=true;
     if(returnPortLabel)returnPortLabel.setVisible(true);
     updateOtherVis(); checkQ('dimension',{});
     if(myRef)myRef.update({dim:1});
+    // Story: chapter 2 objective
+    if(storyMode) updateStoryObj('event','shadow_entered');
 }
 
 function exitShadow(){
@@ -680,14 +808,12 @@ function exitShadow(){
     setText('dimensionHUD','🌍 Normal World');
     var dh=el('dimensionHUD');if(dh)dh.style.color='#aaffaa';
     float('🌍 Normal World!',player.x-100,player.y-80,'#aaffaa');
-    // FIX 4: hide return portal again
     if(returnPortBody)returnPortBody.active=false;
     if(returnPortLabel)returnPortLabel.setVisible(false);
     updateOtherVis();
     if(myRef)myRef.update({dim:0});
 }
 
-// FIX 7: show/hide others by dimension
 function updateOtherVis(){
     Object.values(otherPlayers).forEach(function(op){
         var vis=(op.dim===dim);
@@ -757,23 +883,185 @@ function nextRush(){
     float('⚠️ '+bd.name,player.x-120,player.y-100,'#cc44ff');
     scene.physics.add.overlap(player,boss,onBossHit,null,scene);
 }
-// FIX 1: PvP = no mobs!
 function modePvp(){
     addMsg('System','⚔️ PvP! Attack other players!','#ff88ff');
-    float('⚔️ PvP Arena!',player.x-100,player.y-80,'#ff88ff');
+    float('⚔️ PvP Arena! Attack enemies!',player.x-120,player.y-80,'#ff88ff');
+    scene.add.text(mW/2*tSz,mH/2*tSz+30,'Walk into range of other players\nand press SPACE to attack! ⚔️',
+        {fontSize:'16px',fill:'#ff88ff',stroke:'#000',strokeThickness:3,align:'center'}).setOrigin(0.5).setDepth(6);
 }
+function modeStory(){
+    spawnInitial();
+    addMsg('System','📖 Story Mode! Talk to NPCs (walk near them and press E)','#ffcc44');
+    float('📖 Story Mode begins!',player.x-120,player.y-90,'#ffcc44');
+}
+
+// ================================
+// STORY MODE FUNCTIONS
+// ================================
+function spawnStoryNPCs(){
+    // Elder Oaken — in village area (top-left of forest)
+    var elderX=4*tSz, elderY=5*tSz;
+    var elderSprite=scene.physics.add.image(elderX,elderY,'npcElderTex').setDepth(5).setImmovable(true);
+    var elderAnim=scene.tweens.add({targets:elderSprite,y:elderY-5,duration:1000,yoyo:true,repeat:-1});
+    var elderTag=scene.add.text(elderX,elderY-60,'👴 Elder Oaken\n[E] Talk',{fontSize:'11px',fill:'#ffcc88',stroke:'#000',strokeThickness:2,align:'center'}).setOrigin(0.5).setDepth(6);
+    storyNPCList.push({sprite:elderSprite,tag:elderTag,id:'elder',x:elderX,y:elderY,chapter:1});
+
+    // Scout Finn — near the shadow portal (SE area)
+    var scoutX=18*tSz, scoutY=20*tSz;
+    var scoutSprite=scene.physics.add.image(scoutX,scoutY,'npcScoutTex').setDepth(5).setImmovable(true);
+    scene.tweens.add({targets:scoutSprite,y:scoutY-5,duration:900,yoyo:true,repeat:-1});
+    var scoutTag=scene.add.text(scoutX,scoutY-60,'🏕️ Scout Finn\n[E] Talk',{fontSize:'11px',fill:'#88ff88',stroke:'#000',strokeThickness:2,align:'center'}).setOrigin(0.5).setDepth(6);
+    storyNPCList.push({sprite:scoutSprite,tag:scoutTag,id:'scout',x:scoutX,y:scoutY,chapter:2});
+
+    // Blacksmith Bram — bottom-left area
+    var smithX=5*tSz, smithY=22*tSz;
+    var smithSprite=scene.physics.add.image(smithX,smithY,'npcSmithTex').setDepth(5).setImmovable(true);
+    scene.tweens.add({targets:smithSprite,y:smithY-5,duration:1100,yoyo:true,repeat:-1});
+    var smithTag=scene.add.text(smithX,smithY-60,'⚒️ Blacksmith Bram\n[E] Talk',{fontSize:'11px',fill:'#ffaa44',stroke:'#000',strokeThickness:2,align:'center'}).setOrigin(0.5).setDepth(6);
+    storyNPCList.push({sprite:smithSprite,tag:smithTag,id:'blacksmith',x:smithX,y:smithY,chapter:3});
+}
+
+function beginStoryChapter(num){
+    storyChapter=num;
+    storyChapterComplete=false;
+    var chData=STORY_DATA[num-1];
+    if(!chData)return;
+    // Deep copy objectives
+    storyObjProgress=chData.objectives.map(function(o){return{id:o.id,desc:o.desc,type:o.type,monster:o.monster,key:o.key,target:o.target,n:0,done:false};});
+
+    // Chapter 3: auto-complete reach_lair and spawn dragon
+    if(num===3){
+        storyObjProgress[0].n=1;storyObjProgress[0].done=true;
+        storyLairTriggered=true;
+        setTimeout(function(){if(gameStarted)spawnBoss('adv');},2000);
+        float('🐉 Dragon King awakens!',player.x-140,player.y-100,'#ff8800');
+        S.boss();
+    }
+
+    setText('storyChapterTitle',chData.title);
+    renderStoryPanel();
+    float(chData.title,player.x-160,player.y-110,chData.color);
+    S.story();
+
+    var mh=el('modeHUD');if(mh){mh.textContent=chData.title;mh.style.color=chData.color;}
+}
+
+function renderStoryPanel(){
+    var list=el('storyObjList');if(!list)return;
+    list.innerHTML='';
+    storyObjProgress.forEach(function(o){
+        var d=document.createElement('div');
+        d.style.cssText='margin-bottom:4px;font-size:11px;'+(o.done?'color:#44ff44;opacity:0.7':'color:#ffffff');
+        d.textContent=(o.done?'✅ ':'🔲 ')+o.desc+(o.type!=='auto'&&o.type!=='event'?'  ('+o.n+'/'+o.target+')':'');
+        list.appendChild(d);
+    });
+}
+
+function updateStoryObj(type,data){
+    if(!storyMode||!storyObjProgress.length||storyChapterComplete)return;
+    var changed=false;
+    storyObjProgress.forEach(function(o){
+        if(o.done)return;
+        if(type==='kill'&&(o.type==='kill')&&o.monster===data){o.n=Math.min(o.n+1,o.target);if(o.n>=o.target)o.done=true;changed=true;}
+        if(type==='shadow_kill'&&o.type==='shadow_kill'){o.n=Math.min(o.n+1,o.target);if(o.n>=o.target)o.done=true;changed=true;}
+        if(type==='event'&&o.type==='event'&&o.key===data){o.n=1;o.done=true;changed=true;}
+        if(type==='boss'&&o.type==='boss'){o.n=1;o.done=true;changed=true;}
+    });
+    if(changed)renderStoryPanel();
+    // Check if all objectives done
+    var allDone=storyObjProgress.every(function(o){return o.done;});
+    if(allDone&&!storyChapterComplete)completeStoryChapter();
+}
+
+function completeStoryChapter(){
+    storyChapterComplete=true;
+    var chData=STORY_DATA[storyChapter-1];
+    S.story(); S.story();
+    earnGold(chData.reward);
+    scene.cameras.main.flash(1000,255,255,100);
+    float('🎉 '+chData.rewardMsg,player.x-180,player.y-110,'#ffff00');
+    addMsg('Story','🎉 '+chData.rewardMsg,'#ffaa44');
+
+    setTimeout(function(){
+        if(!gameStarted)return;
+        if(storyChapter<3){
+            beginStoryChapter(storyChapter+1);
+            // Show NPC hint for next chapter
+            var nextData=STORY_DATA[storyChapter];
+            if(nextData)float('Talk to '+nextData.npcId+' for next chapter!',player.x-180,player.y-80,'#ffcc44');
+        } else {
+            showStoryComplete();
+        }
+    },3000);
+}
+
+function showStoryComplete(){
+    storyDone=true;
+    S.story();S.story();S.story();
+    scene.cameras.main.flash(2000,255,220,50);
+    var ov=document.createElement('div');
+    ov.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at center,#1a0a00 0%,#000 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;opacity:0;transition:opacity 2s;font-family:Arial,sans-serif;color:#fff;text-align:center;';
+    ov.innerHTML='<div style="max-width:580px;padding:36px;"><div style="font-size:80px;margin-bottom:12px;">🏆</div><h1 style="font-size:48px;color:#ffdd44;text-shadow:0 0 40px #ffaa00;margin-bottom:8px;">STORY COMPLETE!</h1><p style="font-size:16px;color:#ffcc88;margin-bottom:6px;">You have saved the Pixel Realm!</p><p style="font-size:18px;color:#ffaa44;margin-bottom:4px;">'+pClass.icon+' <b>'+pName+'</b> — Level '+pLv+'</p><p style="font-size:15px;color:#ff8844;margin-bottom:4px;">🐉 Title Earned: <b>Dragon Slayer</b></p><p style="font-size:22px;color:#ffdd44;margin-bottom:6px;">Score: '+score+'</p><p style="font-size:14px;color:#ffaa00;margin-bottom:24px;">💰 Total Gold: '+gold+'</p><button onclick="location.reload()" style="padding:12px 36px;font-size:16px;background:linear-gradient(135deg,#cc8800,#ffaa00);color:#000;border:none;border-radius:10px;cursor:pointer;font-weight:bold;">🏠 Return to Menu</button></div>';
+    document.body.appendChild(ov);
+    setTimeout(function(){ov.style.opacity='1';},100);
+}
+
+function startNPCDialog(npc){
+    if(storyDialogActive)return;
+    var chData=STORY_DATA[storyChapter-1];
+    if(!chData)return;
+    if(chData.npcId!==npc.id){
+        // Wrong NPC for this chapter — give generic line
+        var genericLines={
+            elder:[{speaker:'👴 Elder Oaken',text:'"Stay safe out there, hero! The village is counting on you! 💪"'}],
+            scout:[{speaker:'🏕️ Scout Finn',text:'"I\'m scouting the perimeter. Watch your back! 🏕️"'}],
+            blacksmith:[{speaker:'⚒️ Blacksmith Bram',text:'"Come back when you\'re stronger! I have work to do. ⚒️"'}]
+        };
+        var lines=genericLines[npc.id]||[{speaker:npc.id,text:'"Hello, traveller!"'}];
+        showStoryDialog(lines); return;
+    }
+    showStoryDialog(chData.dialog);
+}
+
+function showStoryDialog(lines){
+    if(!lines||!lines.length)return;
+    storyDialogActive=true;
+    chatOpen=true;
+    window._storyDialogLines=lines;
+    window._storyDialogIdx=0;
+    var entry=lines[0];
+    setText('storyDialogSpeaker',entry.speaker||'');
+    setText('storyDialogText',entry.text||'');
+    var sd=el('storyDialog');
+    if(sd){sd.style.display='flex';sd.style.opacity='0';setTimeout(function(){sd.style.opacity='1';},20);}
+}
+
+window.advanceStoryDialog=function(){
+    window._storyDialogIdx=(window._storyDialogIdx||0)+1;
+    var lines=window._storyDialogLines||[];
+    if(window._storyDialogIdx>=lines.length){
+        var sd=el('storyDialog');if(sd){sd.style.opacity='0';setTimeout(function(){sd.style.display='none';},300);}
+        storyDialogActive=false;
+        chatOpen=false;
+        window._storyDialogLines=[];
+    } else {
+        var entry=lines[window._storyDialogIdx];
+        setText('storyDialogSpeaker',entry.speaker||'');
+        setText('storyDialogText',entry.text||'');
+    }
+};
 
 // ================================
 // SPAWN ENEMIES
 // ================================
 function spawnInitial(){
-    if(selectedMode==='pvp')return; // FIX 1
+    if(selectedMode==='pvp')return;
     var ks=Object.keys(curPool);if(!ks.length)return;
     for(var i=0;i<12;i++)spawnEnemy(ks[Math.floor(Math.random()*ks.length)],curPool);
 }
 function spawnEnemy(type,pool){
     pool=pool||curPool;
-    if(!pool||!Object.keys(pool).length)return; // FIX 1: safety
+    if(!pool||!Object.keys(pool).length)return;
     var ks=Object.keys(pool);
     if(!type||!pool[type])type=ks[Math.floor(Math.random()*ks.length)];
     var m=pool[type];if(!m)return;
@@ -804,7 +1092,12 @@ function setupKeys(){
     wasd=scene.input.keyboard.addKeys({up:Phaser.Input.Keyboard.KeyCodes.W,down:Phaser.Input.Keyboard.KeyCodes.S,left:Phaser.Input.Keyboard.KeyCodes.A,right:Phaser.Input.Keyboard.KeyCodes.D});
     shiftKey=scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
     scene.input.keyboard.on('keydown-SPACE',function(){if(!chatOpen)doAtk();});
-    scene.input.keyboard.on('keydown-E',    function(){if(!chatOpen)doAbi();});
+    scene.input.keyboard.on('keydown-E',function(){
+        if(chatOpen)return;
+        // Story: talk to NPC if nearby
+        if(storyMode&&storyNearNPC){startNPCDialog(storyNearNPC);return;}
+        doAbi();
+    });
     scene.input.keyboard.on('keydown-F',    function(){if(!chatOpen)doPot();});
     scene.input.keyboard.on('keydown-I',    function(){if(!chatOpen)toggleInv();});
     scene.input.keyboard.on('keydown-T',    function(){openChat();});
@@ -821,7 +1114,7 @@ function setupJoystick(){
 }
 
 // ================================
-// ATTACK
+// ATTACK (PvP fixed!)
 // ================================
 function doAtk(){
     var now=Date.now();if(now-lastAtk<pClass.atk)return;lastAtk=now;
@@ -838,6 +1131,7 @@ function doAtk(){
             var dmg=pDmg;
             if(selectedClass==='berserker'){var r=pH/pMaxH;if(r<0.5)dmg=Math.floor(dmg*1.8);if(r<0.25)dmg=Math.floor(dmg*2.5);}
             if(selectedClass==='assassin'){var chains=[]; enemies.getChildren().forEach(function(e2){if(e2!==e&&Phaser.Math.Distance.Between(e.x,e.y,e2.x,e2.y)<120)chains.push(e2);});chains.slice(0,3).forEach(function(ec){ec.hp-=dmg*0.5;if(ec.hp<=0)killEnemy(ec);});}
+            if(selectedClass==='vampire'){var lifesteal=Math.floor(dmg*0.3);pH=Math.min(pH+lifesteal,pMaxH);updateHP();}
             var crit=(selectedClass==='rogue'||selectedClass==='assassin')&&Math.random()<0.3;
             if(crit)dmg=Math.floor(dmg*2);
             e.hp-=dmg;e.setTint(0xffffff);
@@ -849,19 +1143,31 @@ function doAtk(){
     if(boss&&boss.active&&Phaser.Math.Distance.Between(player.x,player.y,boss.x,boss.y)<=pRange+50){
         boss.hp-=pDmg;updateBossHP();if(boss.hp<=0)killBoss();
     }
-    // FIX 6: PvP real damage
+
+    // ====== PVP FIX: real damage + proper hit detection ======
     if(selectedMode==='pvp'){
         Object.entries(otherPlayers).forEach(function(kv){
             var opId=kv[0],op=kv[1];
             if(!op||!op.sprite||!op.sprite.active)return;
             if(Phaser.Math.Distance.Between(player.x,player.y,op.sprite.x,op.sprite.y)<=pRange){
-                var dmg=Math.floor(pDmg*(Math.random()<0.3?2:1));
+                var crit=Math.random()<0.25;
+                var dmg=Math.floor(pDmg*(crit?2:1));
                 pvpHit(opId,dmg);
-                float('⚔️ -'+dmg,op.sprite.x,op.sprite.y-40,'#ff44ff');
+                // Slash visual on target
+                var slash=scene.add.graphics();
+                slash.lineStyle(4,0xff44ff,1);
+                slash.lineBetween(op.sprite.x-22,op.sprite.y-22,op.sprite.x+22,op.sprite.y+22);
+                slash.lineBetween(op.sprite.x+22,op.sprite.y-22,op.sprite.x-22,op.sprite.y+22);
+                scene.tweens.add({targets:slash,alpha:0,scaleX:1.5,scaleY:1.5,duration:280,onComplete:function(){slash.destroy();}});
+                // Flash other player red
+                if(op.sprite){op.sprite.setTint(0xff0000);scene.time.delayedCall(250,function(){if(op&&op.sprite&&op.sprite.active)op.sprite.clearTint();});}
+                float((crit?'💥 CRIT! ':'⚔️ ')+dmg,op.sprite.x,op.sprite.y-50,crit?'#ffff00':'#ff44ff');
+                hit=true; // prevents "miss" text
             }
         });
     }
-    if(!hit&&!(boss&&boss.active))float('miss',player.x+playerFacing*30,player.y-20,'#444');
+
+    if(!hit&&!(boss&&boss.active)) float('miss',player.x+playerFacing*30,player.y-20,'#444');
 }
 
 function onEnemyHit(player,enemy){
@@ -884,6 +1190,11 @@ function killEnemy(e){
     var mt=e.mtype||'goblin';
     if(!questStats.kills[mt])questStats.kills[mt]=0;questStats.kills[mt]++;
     checkQ('kill',{m:mt});checkQ('score',{});
+    // Story objective tracking
+    if(storyMode){
+        if(e.pool===POOL_SHADOW) updateStoryObj('shadow_kill',mt);
+        else updateStoryObj('kill',mt);
+    }
     if(e.hpBar)e.hpBar.destroy();if(e.tag)e.tag.destroy();
     var ws=(e.pool===POOL_SHADOW),pool2=e.pool;e.destroy();
     if(selectedMode==='survival'){onWaveKill();return;}
@@ -891,6 +1202,7 @@ function killEnemy(e){
         if(!gameStarted)return;
         if(selectedMode==='adventure')spawnEnemy(null,ws?POOL_SHADOW:POOL_ADV);
         else if(selectedMode==='bossrush')spawnEnemy(null,POOL_BRS);
+        else if(selectedMode==='story')spawnEnemy(null,ws?POOL_SHADOW:POOL_ADV);
     },4000);
 }
 
@@ -900,6 +1212,8 @@ function killEnemy(e){
 function spawnBoss(mode){
     if(bossSpawned)return;bossSpawned=true;S.boss();
     var bd=mode==='srv'?BOSS_SRV:BOSS_ADV;
+    // Story ch2: use Shadow Wraith instead
+    if(storyMode&&storyChapter===2) bd=BOSS_RUSH[0];
     makeBossTex('modeBoss',bd);
     var x=mW/2*tSz,y=mH/2*tSz;
     boss=scene.physics.add.image(x,y,'modeBoss');
@@ -910,7 +1224,7 @@ function spawnBoss(mode){
     bossHPBg=scene.add.rectangle(640,50,504,28,0x000000).setScrollFactor(0).setDepth(15);
     bossHPBar=scene.add.rectangle(640,50,500,24,bd.bar).setScrollFactor(0).setDepth(15);
     bossTxt=scene.add.text(640,50,bd.name,{fontSize:'14px',fill:'#fff'}).setOrigin(0.5).setScrollFactor(0).setDepth(15);
-    float('⚠️ '+bd.name+'!',player.x-130,player.y-100,'#ff4444');
+    if(player)float('⚠️ '+bd.name+'!',player.x-130,player.y-100,'#ff4444');
     addMsg('System','⚠️ '+bd.name,'#ff4444');
     scene.physics.add.overlap(player,boss,onBossHit,null,scene);
 }
@@ -933,8 +1247,10 @@ function killBoss(){
     questStats.bossKills++;checkQ('boss',{});
     float('🏆 BOSS DEFEATED!',player.x-120,player.y-90,'#ffff00');
     addMsg('System','🏆 Boss defeated!','#ffff00');
+    // Story
+    if(storyMode) updateStoryObj('boss','boss');
     if(selectedMode==='bossrush')setTimeout(function(){if(gameStarted)nextRush();},3000);
-    else scene.time.addEvent({delay:180000,callback:function(){if(gameStarted)spawnBoss(selectedMode==='survival'?'srv':'adv');}});
+    else if(!storyMode) scene.time.addEvent({delay:180000,callback:function(){if(gameStarted)spawnBoss(selectedMode==='survival'?'srv':'adv');}});
 }
 function updateBossHP(){
     if(!boss||!bossHPBar)return;
@@ -963,7 +1279,7 @@ function doPot(){
 }
 
 // ================================
-// ABILITIES
+// ABILITIES — all 18 classes
 // ================================
 function doAbi(){
     var now=Date.now();
@@ -971,19 +1287,27 @@ function doAbi(){
     lastAbi=now; S.abi();
     var btn=el('abilityBtn');if(btn){btn.classList.remove('ready');btn.classList.add('cooldown');setTimeout(function(){btn.classList.remove('cooldown');btn.classList.add('ready');},pClass.cd);}
     var c=selectedClass;
-    if(c==='warrior')     abiWarrior();
-    else if(c==='archer') abiArcher();
-    else if(c==='mage')   abiMage();
-    else if(c==='rogue')  abiRogue();
-    else if(c==='paladin')    abiPaladin();
-    else if(c==='necromancer')abiNecro();
-    else if(c==='berserker')  abiBerserk();
-    else if(c==='ranger')     abiRanger();
-    else if(c==='druid')      abiDruid();
-    else if(c==='assassin')   abiAssassin();
-    else if(c==='warlord')    abiWarlord();
-    else if(c==='archmage')   abiArchmage();
+    if(c==='warrior')      abiWarrior();
+    else if(c==='archer')  abiArcher();
+    else if(c==='mage')    abiMage();
+    else if(c==='rogue')   abiRogue();
+    else if(c==='paladin')     abiPaladin();
+    else if(c==='necromancer') abiNecro();
+    else if(c==='berserker')   abiBerserk();
+    else if(c==='ranger')      abiRanger();
+    else if(c==='knight')      abiKnight();
+    else if(c==='monk')        abiMonk();
+    else if(c==='shaman')      abiShaman();
+    else if(c==='druid')       abiDruid();
+    else if(c==='assassin')    abiAssassin();
+    else if(c==='warlord')     abiWarlord();
+    else if(c==='archmage')    abiArchmage();
+    else if(c==='vampire')     abiVampire();
+    else if(c==='gunslinger')  abiGunslinger();
+    else if(c==='bard')        abiBard();
 }
+
+// Original 8 abilities
 function abiWarrior(){ float('🛡️ SHIELD BASH!',player.x-60,player.y-70,'#ff8888');particles(player.x,player.y,0xff6666,16);enemies.getChildren().forEach(function(e){if(Phaser.Math.Distance.Between(player.x,player.y,e.x,e.y)<160){var prev=e.speed;e.speed=0;e.setTint(0xffff00);e.hp-=pDmg*2.5;scene.time.delayedCall(2500,function(){if(e&&e.active){e.speed=prev;e.clearTint();}});if(e.hp<=0)killEnemy(e);}}); }
 function abiArcher(){ float('🏹 ARROW RAIN!',player.x-60,player.y-70,'#88ff88');for(var i=0;i<16;i++){(function(a){var arr=scene.add.rectangle(player.x,player.y,22,5,0x88ff44).setRotation(a).setDepth(10);scene.tweens.add({targets:arr,x:player.x+Math.cos(a)*280,y:player.y+Math.sin(a)*280,alpha:0,duration:450,onComplete:function(){arr.destroy();}});enemies.getChildren().forEach(function(e){var ex=e.x-player.x,ey=e.y-player.y,d=Math.sqrt(ex*ex+ey*ey);if(d<280&&Math.abs(Math.atan2(ey,ex)-a)<0.25){e.hp-=pDmg;if(e.hp<=0)killEnemy(e);}});})(i/16*Math.PI*2);} }
 function abiMage(){ float('🔥 FIREBALL!',player.x-50,player.y-70,'#8888ff');particles(player.x,player.y,0xff4400,28);scene.cameras.main.shake(500,0.02);enemies.getChildren().forEach(function(e){if(Phaser.Math.Distance.Between(player.x,player.y,e.x,e.y)<270){e.hp-=pDmg*3.5;if(e.hp<=0)killEnemy(e);}});if(boss&&boss.active&&Phaser.Math.Distance.Between(player.x,player.y,boss.x,boss.y)<270){boss.hp-=pDmg*3.5;updateBossHP();if(boss.hp<=0)killBoss();} }
@@ -992,17 +1316,160 @@ function abiPaladin(){ float('✨ HOLY AURA!',player.x-60,player.y-70,'#ffddaa')
 function abiNecro(){ float('☠️ RAISE DEAD!',player.x-60,player.y-70,'#88ff88');for(var i=0;i<3;i++){(function(a){var mx=player.x+Math.cos(a)*60,my=player.y+Math.sin(a)*60;var mn=scene.physics.add.image(mx,my,'minionTex');mn.speed=130;minions.push(mn);mn.lbl=scene.add.text(mx,my-28,'☠️',{fontSize:'14px'}).setOrigin(0.5);scene.physics.add.overlap(mn,enemies,function(m,e){if(!e||!e.active)return;e.hp-=15;if(e.hp<=0)killEnemy(e);});scene.time.delayedCall(15000,function(){if(mn&&mn.active){if(mn.lbl)mn.lbl.destroy();mn.destroy();minions=minions.filter(function(m){return m!==mn;});}});})(i/3*Math.PI*2);} }
 function abiBerserk(){ float('😤 BERSERK!',player.x-50,player.y-70,'#ff4444');berserking=true;pSpd*=1.6;pDmg=Math.floor(pDmg*2.5);player.setTint(0xff2200);scene.cameras.main.shake(300,0.015);scene.time.delayedCall(8000,function(){berserking=false;pSpd/=1.6;pDmg=Math.floor(pDmg/2.5);player.clearTint();float('😤 Rage ended',player.x-50,player.y-60,'#888');}); }
 function abiRanger(){ float('🐺 WOLF PACK!',player.x-50,player.y-70,'#44ffaa');for(var i=0;i<2;i++){(function(){var wx=player.x+Phaser.Math.Between(-60,60),wy=player.y+Phaser.Math.Between(-60,60);var wf=scene.physics.add.image(wx,wy,'wolfTex');wf.speed=200;wolfPets.push(wf);wf.lbl=scene.add.text(wx,wy-28,'🐺',{fontSize:'14px'}).setOrigin(0.5);scene.physics.add.overlap(wf,enemies,function(w,e){if(!e||!e.active)return;var now=Date.now();if(!w.lb||now-w.lb>800){w.lb=now;e.hp-=20+pLv*3;if(e.hp<=0)killEnemy(e);}});scene.time.delayedCall(18000,function(){if(wf&&wf.active){if(wf.lbl)wf.lbl.destroy();wf.destroy();wolfPets=wolfPets.filter(function(w){return w!==wf;});}});})()} }
+
+// NEW CLASS ABILITIES
+function abiKnight(){
+    float('💨 CHARGE!',player.x-50,player.y-70,'#aaaaff');
+    // Dash forward
+    var dashDist=280;var vx=playerFacing*dashDist,vy=0;
+    player.setVelocity(playerFacing*1200,0);
+    // Damage enemies in path
+    scene.time.addEvent({delay:30,repeat:5,callback:function(){
+        enemies.getChildren().forEach(function(e){
+            if(!e||!e.active)return;
+            if(Math.abs(e.x-player.x)<60&&Math.abs(e.y-player.y)<50){
+                e.hp-=pDmg*2;e.setTint(0xaaaaff);
+                var push=playerFacing*200;e.setVelocityX(push);
+                scene.time.delayedCall(300,function(){if(e&&e.active){e.clearTint();e.setVelocityX(0);}});
+                float('💨 '+Math.floor(pDmg*2),e.x,e.y-40,'#aaaaff');
+                if(e.hp<=0)killEnemy(e);
+            }
+        });
+    }});
+    scene.time.delayedCall(200,function(){if(player)player.setVelocity(0);});
+    particles(player.x+playerFacing*60,player.y,0xaaaaff,14);
+}
+function abiMonk(){
+    float('👊 COMBO STRIKE!',player.x-70,player.y-70,'#ffcc88');
+    var hits=[0,120,240,360,480];
+    hits.forEach(function(delay,i){
+        setTimeout(function(){
+            if(!player||!player.active||!gameStarted)return;
+            particles(player.x+playerFacing*pRange*0.5,player.y,0xffcc44,8);
+            scene.cameras.main.shake(80,0.004);
+            enemies.getChildren().forEach(function(e){
+                if(!e||!e.active)return;
+                if(Phaser.Math.Distance.Between(player.x,player.y,e.x,e.y)<=pRange+20){
+                    var dmg=Math.floor(pDmg*(1+i*0.3));
+                    e.hp-=dmg;
+                    float(dmg,e.x,e.y-30-i*10,'#ffcc44');
+                    if(e.hp<=0)killEnemy(e);
+                }
+            });
+            if(i===4)float('💥 5-HIT COMBO!',player.x-80,player.y-90,'#ff8800');
+        },delay);
+    });
+}
+function abiShaman(){
+    float('🌩️ LIGHTNING STORM!',player.x-80,player.y-70,'#ffff44');
+    scene.cameras.main.flash(300,255,255,100);
+    var targets=[];
+    enemies.getChildren().forEach(function(e){if(e&&e.active)targets.push(e);});
+    targets.sort(function(){return Math.random()-0.5;});
+    targets.slice(0,8).forEach(function(e,idx){
+        setTimeout(function(){
+            if(!e||!e.active)return;
+            // Lightning bolt visual
+            var lx1=e.x+Phaser.Math.Between(-10,10),ly1=e.y-120;
+            var bolt=scene.add.graphics();
+            bolt.lineStyle(3,0xffff00,1);
+            bolt.lineBetween(lx1,ly1,e.x,e.y);
+            bolt.lineStyle(2,0xffffff,0.5);
+            bolt.lineBetween(lx1+5,ly1+20,e.x+5,e.y-20);
+            scene.tweens.add({targets:bolt,alpha:0,duration:300,onComplete:function(){bolt.destroy();}});
+            var dmg=Math.floor(pDmg*1.8);
+            e.hp-=dmg;e.setTint(0xffff00);
+            scene.time.delayedCall(150,function(){if(e&&e.active)e.clearTint();});
+            float('⚡ '+dmg,e.x,e.y-50,'#ffff00');
+            if(e.hp<=0)killEnemy(e);
+        },idx*120);
+    });
+    if(boss&&boss.active){boss.hp-=pDmg*4;updateBossHP();if(boss.hp<=0)killBoss();}
+}
+
 // PREMIUM class abilities
 function abiDruid(){ float('🌿 NATURE HEAL!',player.x-70,player.y-70,'#aaffcc');var heal=Math.floor(pMaxH*0.5);pH=Math.min(pH+heal,pMaxH);updateHP();for(var i=0;i<12;i++){(function(a){var leaf=scene.add.circle(player.x+Math.cos(a)*60,player.y+Math.sin(a)*60,7,0x44ff88).setDepth(15);scene.tweens.add({targets:leaf,x:player.x,y:player.y,alpha:0,duration:800,onComplete:function(){leaf.destroy();}});})(i/12*Math.PI*2);}float('+'+heal+' HP!',player.x,player.y-90,'#44ff44'); }
 function abiAssassin(){ float('⚡ CHAIN STRIKE!',player.x-70,player.y-70,'#ff6688');var targets=[];enemies.getChildren().forEach(function(e){if(Phaser.Math.Distance.Between(player.x,player.y,e.x,e.y)<300)targets.push(e);});targets.sort(function(a,b){return Phaser.Math.Distance.Between(player.x,player.y,a.x,a.y)-Phaser.Math.Distance.Between(player.x,player.y,b.x,b.y);});targets.slice(0,5).forEach(function(e,i){setTimeout(function(){if(!e||!e.active)return;var dmg=Math.floor(pDmg*2*Math.pow(0.8,i));e.hp-=dmg;float('⚡ '+dmg,e.x,e.y-40,'#ff6688');if(e.hp<=0)killEnemy(e);},i*100);}); }
 function abiWarlord(){ float('👑 RALLY ARMY!',player.x-70,player.y-70,'#ffcc44');for(var i=0;i<4;i++){(function(a){var sx=player.x+Math.cos(a)*80,sy=player.y+Math.sin(a)*80;var sol=scene.physics.add.image(sx,sy,'minionTex').setTint(0xffcc44);sol.speed=160;minions.push(sol);sol.lbl=scene.add.text(sx,sy-28,'⚔️',{fontSize:'12px'}).setOrigin(0.5);scene.physics.add.overlap(sol,enemies,function(m,e){if(!e||!e.active)return;e.hp-=pDmg*0.8;if(e.hp<=0)killEnemy(e);});scene.time.delayedCall(20000,function(){if(sol&&sol.active){if(sol.lbl)sol.lbl.destroy();sol.destroy();minions=minions.filter(function(m){return m!==sol;});}});})(i/4*Math.PI*2);} }
 function abiArchmage(){ float('💥 METEOR STRIKE!',player.x-80,player.y-70,'#cc88ff');particles(player.x,player.y,0xff4400,40);particles(player.x,player.y,0xcc88ff,30);scene.cameras.main.shake(800,0.035);enemies.getChildren().forEach(function(e){if(Phaser.Math.Distance.Between(player.x,player.y,e.x,e.y)<400){e.hp-=pDmg*6;if(e.hp<=0)killEnemy(e);}});if(boss&&boss.active&&Phaser.Math.Distance.Between(player.x,player.y,boss.x,boss.y)<400){boss.hp-=pDmg*6;updateBossHP();if(boss.hp<=0)killBoss();} }
 
+function abiVampire(){
+    float('🩸 BLOOD DRAIN!',player.x-70,player.y-70,'#cc0044');
+    var totalDrained=0;
+    enemies.getChildren().forEach(function(e){
+        if(!e||!e.active)return;
+        if(Phaser.Math.Distance.Between(player.x,player.y,e.x,e.y)<200){
+            var drain=Math.floor(pDmg*1.5);
+            e.hp-=drain; totalDrained+=Math.floor(drain*0.6);
+            // Blood particles flying back to player
+            for(var i=0;i<5;i++){(function(){
+                var bx=e.x,by=e.y;
+                var bp=scene.add.circle(bx,by,4,0xff0044).setDepth(14);
+                scene.tweens.add({targets:bp,x:player.x,y:player.y,duration:400,onComplete:function(){bp.destroy();}});
+            })();}
+            float('🩸 -'+drain,e.x,e.y-40,'#cc0044');
+            if(e.hp<=0)killEnemy(e);
+        }
+    });
+    if(totalDrained>0){pH=Math.min(pH+totalDrained,pMaxH);updateHP();float('🩸 +'+totalDrained+' life steal!',player.x,player.y-90,'#ff4488');}
+}
+
+function abiGunslinger(){
+    float('💥 BULLET STORM!',player.x-70,player.y-70,'#ffcc00');
+    for(var i=0;i<10;i++){(function(angleOffset){
+        setTimeout(function(){
+            if(!player||!player.active)return;
+            var baseAngle=playerFacing===1?0:Math.PI;
+            var angle=baseAngle+angleOffset;
+            var bullet=scene.add.image(player.x,player.y,'bulletTex').setDepth(12);
+            var targetX=player.x+Math.cos(angle)*320;
+            var targetY=player.y+Math.sin(angle)*320;
+            scene.tweens.add({targets:bullet,x:targetX,y:targetY,duration:220,onComplete:function(){bullet.destroy();}});
+            enemies.getChildren().forEach(function(e){
+                if(!e||!e.active)return;
+                var ex=e.x-player.x,ey=e.y-player.y;
+                var d=Math.sqrt(ex*ex+ey*ey);
+                var ea=Math.atan2(ey,ex);
+                if(d<320&&Math.abs(ea-angle)<0.22){
+                    var dmg=Math.floor(pDmg*(Math.random()<0.2?2:1));
+                    e.hp-=dmg;float('💥 '+dmg,e.x,e.y-40,'#ffcc00');
+                    if(e.hp<=0)killEnemy(e);
+                }
+            });
+            if(boss&&boss.active){
+                var bd=Math.atan2(boss.y-player.y,boss.x-player.x);
+                if(Math.abs(bd-angle)<0.3){boss.hp-=Math.floor(pDmg*0.8);updateBossHP();if(boss.hp<=0)killBoss();}
+            }
+        },i*60);
+    })((i/10-0.5)*1.2);}
+}
+
+function abiBard(){
+    float('🎶 BATTLE HYMN!',player.x-70,player.y-70,'#ff88ff');
+    // Buff: speed + damage for 6s
+    pSpd*=1.4; pDmg=Math.floor(pDmg*1.5);
+    player.setTint(0xff88ff);
+    // Musical notes fly out
+    var notes=['🎵','🎶','🎸','🎺'];
+    for(var i=0;i<12;i++){(function(a){
+        var note=scene.add.text(player.x+Math.cos(a)*50,player.y+Math.sin(a)*50,notes[Math.floor(Math.random()*notes.length)],{fontSize:'18px'}).setDepth(15);
+        scene.tweens.add({targets:note,x:player.x+Math.cos(a)*150,y:player.y+Math.sin(a)*150-40,alpha:0,duration:1200,onComplete:function(){note.destroy();}});
+    })(i/12*Math.PI*2);}
+    // Heal nearby players via chat (cosmetic)
+    pH=Math.min(pH+Math.floor(pMaxH*0.2),pMaxH); updateHP();
+    float('🎶 +Buff 6s! +20% HP!',player.x,player.y-90,'#ff88ff');
+    scene.time.delayedCall(6000,function(){
+        pSpd/=1.4; pDmg=Math.floor(pDmg/1.5);
+        player.clearTint();
+        float('🎶 Hymn fades...',player.x-50,player.y-60,'#888');
+    });
+}
+
 // ================================
 // XP + LEVEL
 // ================================
-function gainXP(amount){ pXP+=amount;float('+'+amount+' XP',player.x,player.y-70,'#ffff44');if(pXP>=xpNext)levelUp();if(xpBar)xpBar.width=202*(pXP/xpNext);if(xpText)xpText.setText('XP: '+pXP+'/'+xpNext); }
-function levelUp(){ pXP-=xpNext;pLv++;xpNext=pLv*100;pMaxH+=20;pH=pMaxH;pSpd+=5;pDmg+=5;S.lvup();scene.tweens.add({targets:player,scaleX:1.5,scaleY:1.5,duration:200,yoyo:true,repeat:2});player.setTint(0xffff00);scene.time.delayedCall(800,function(){if(!berserking)player.clearTint();});if(lvTxt)lvTxt.setText('⭐ Lv.'+pLv);if(nameTxt)nameTxt.setText(pClass.icon+' '+pName+' Lv.'+pLv);updateHP();checkQ('level',{});float('🌟 LEVEL UP! '+pLv,player.x-70,player.y-90,'#ffff00');doSave(); }
+function gainXP(amount){ pXP+=amount;float('+'+amount+' XP',player.x,player.y-70,'#ffff44');if(pXP>=xpNext)levelUp();if(xpBar)xpBar.width=202*(pXP/xpNext);if(xpText)xpText.setText('XP: '+pXP+'/'+xpNext);checkQ('level',{}); }
+function levelUp(){ pXP-=xpNext;pLv++;xpNext=pLv*100;pMaxH+=20;pH=pMaxH;pSpd+=5;pDmg+=5;S.lvup();scene.tweens.add({targets:player,scaleX:1.5,scaleY:1.5,duration:200,yoyo:true,repeat:2});player.setTint(0xffff00);scene.time.delayedCall(800,function(){if(!berserking)player.clearTint();});if(lvTxt)lvTxt.setText('⭐ Lv.'+pLv);if(nameTxt)nameTxt.setText(pClass.icon+' '+pName+' Lv.'+pLv);updateHP();float('🌟 LEVEL UP! '+pLv,player.x-70,player.y-90,'#ffff00');doSave(); }
 
 // ================================
 // DAY/NIGHT
@@ -1015,13 +1482,12 @@ function startDayNight(){ timeTxt=scene.add.text(640,15,'☀️ Day',{fontSize:'
 function startSurvTimer(){ scene.time.addEvent({delay:1000,loop:true,callback:function(){if(!gameStarted||!player||!player.active)return;survTimer++;checkQ('survive',{});if(survTimer%5===0&&pH<pMaxH){pH=Math.min(pH+1,pMaxH);updateHP();}}}); }
 
 // ================================
-// TOMBSTONE — FIX 10: 5 sec, mode-tagged
+// TOMBSTONE
 // ================================
 function spawnTombstone(x,y){
     addTombVis(x,y,pName,pLv,'#cccccc');
     if(tombsRef&&myId){
         var ref=tombsRef.push({x:x,y:y,name:pClass.icon+' '+pName,level:pLv,mode:selectedMode,sid:myId,t:Date.now()});
-        // FIX 10: auto-delete after 5 seconds
         setTimeout(function(){if(ref)ref.remove();},5000);
     }
 }
@@ -1030,7 +1496,6 @@ function addTombVis(x,y,name,level,color){
     var stone=scene.add.image(x,y,'tombTex').setDepth(7);
     var lbl=scene.add.text(x,y-34,'💀 '+name+'\nLv.'+level,{fontSize:'10px',fill:color||'#ccc',stroke:'#000',strokeThickness:2,align:'center'}).setOrigin(0.5).setDepth(7);
     tombs.push({stone:stone,lbl:lbl});
-    // FIX 10: disappear after 5 seconds
     setTimeout(function(){
         if(!scene)return;
         scene.tweens.add({targets:[stone,lbl],alpha:0,duration:1500,onComplete:function(){if(stone&&stone.active)stone.destroy();if(lbl&&lbl.active)lbl.destroy();}});
@@ -1038,15 +1503,14 @@ function addTombVis(x,y,name,level,color){
 }
 
 // ================================
-// SAVE — popup with null check
+// SAVE
 // ================================
 function doSave(){
     saveGame();S.save();
-    // All null-checked!
     var notif=el('saveNotif'); var ntxt=el('saveText');
     if(ntxt)ntxt.textContent='✅ Saved! Lv.'+pLv+'  💰'+gold+'  Score:'+score;
     if(notif){notif.style.display='block';notif.style.opacity='1';setTimeout(function(){notif.style.transition='opacity 0.6s';notif.style.opacity='0';setTimeout(function(){if(notif)notif.style.display='none';},700);},2500);}
-    float('💾 Saved!',player.x,player.y-60,'#00ffff');
+    if(player)float('💾 Saved!',player.x,player.y-60,'#00ffff');
 }
 
 // ================================
@@ -1065,7 +1529,7 @@ function buildUI(){
     scoreTxt=scene.add.text(16,95,'Score: '+score,{fontSize:'13px',fill:'#fff'}).setScrollFactor(0).setDepth(10);
     goldTxt=scene.add.text(16,113,'💰 '+gold,{fontSize:'13px',fill:'#ffdd44'}).setScrollFactor(0).setDepth(10);
     scene.add.text(16,131,pClass.icon+' '+pClass.name,{fontSize:'12px',fill:'#ffbb88'}).setScrollFactor(0).setDepth(10);
-    if(!isMobile)scene.add.text(16,696,'WASD:Move  SHIFT:Sprint  SPACE:Attack  E:'+pClass.ability+'  F:Potion  I:Bag  T:Chat  ENTER:Save',{fontSize:'10px',fill:'#88aa88'}).setScrollFactor(0).setDepth(10);
+    if(!isMobile)scene.add.text(16,696,'WASD:Move  SHIFT:Sprint  SPACE:Attack  E:'+(storyMode?'Talk/'+pClass.ability:pClass.ability)+'  F:Potion  I:Bag  T:Chat  ENTER:Save',{fontSize:'10px',fill:'#88aa88'}).setScrollFactor(0).setDepth(10);
     nameTxt=scene.add.text(0,0,pClass.icon+' '+pName+' Lv.'+pLv,{fontSize:'12px',fill:'#fff',stroke:'#000',strokeThickness:2});
 }
 function updateHP(){
@@ -1125,13 +1589,18 @@ function updateMinimap(){
     var canvas=el('minimap');if(!canvas||!player)return;
     canvas.width=130;canvas.height=130;
     var ctx=canvas.getContext('2d'),sx=130/(mW*tSz),sy=130/(mH*tSz);
-    var bgM={adventure:'#1a4a1a',survival:'#3d1500',bossrush:'#0d0011',pvp:'#1a1a22'};
+    var bgM={adventure:'#1a4a1a',survival:'#3d1500',bossrush:'#0d0011',pvp:'#1a1a22',story:'#1a4a1a'};
     ctx.fillStyle=inShadow?'#110022':(bgM[selectedMode]||'#1a4a1a');ctx.fillRect(0,0,130,130);
     enemies.getChildren().forEach(function(e){ctx.fillStyle='#ff4444';ctx.fillRect(e.x*sx-2,e.y*sy-2,4,4);});
     if(boss&&boss.active){ctx.fillStyle='#ff0000';ctx.fillRect(boss.x*sx-5,boss.y*sy-5,10,10);}
-    // FIX 7: only minimap dots in same dimension
     Object.values(otherPlayers).forEach(function(op){if(op.dim!==dim)return;ctx.fillStyle='#cc88ff';ctx.fillRect(op.sprite.x*sx-2,op.sprite.y*sy-2,5,5);});
-    if(selectedMode==='adventure'){
+    // Story: NPC dots
+    if(storyMode){
+        storyNPCList.forEach(function(npc){
+            ctx.fillStyle='#ffcc44';ctx.fillRect(npc.x*sx-3,npc.y*sy-3,6,6);
+        });
+    }
+    if(selectedMode==='adventure'||selectedMode==='story'){
         if(!inShadow){ctx.fillStyle='#aa00ff';ctx.fillRect(22*tSz*sx-3,22*tSz*sy-3,6,6);}
         else{ctx.fillStyle='#ffaa00';ctx.fillRect(4*tSz*sx-3,4*tSz*sy-3,6,6);}
     }
@@ -1143,7 +1612,7 @@ function updateMinimap(){
 // SAVE / LOAD
 // ================================
 function saveGame(){
-    localStorage.setItem('rpgSave',JSON.stringify({pLv:pLv,pXP:pXP,pH:pH,pMaxH:pMaxH,pSpd:pSpd,pDmg:pDmg,xpNext:xpNext,score:score,inv:inv,pName:pName,cls:selectedClass,qStats:questStats}));
+    localStorage.setItem('rpgSave',JSON.stringify({pLv:pLv,pXP:pXP,pH:pH,pMaxH:pMaxH,pSpd:pSpd,pDmg:pDmg,xpNext:xpNext,score:score,inv:inv,pName:pName,cls:selectedClass,qStats:questStats,storyChapter:storyChapter}));
     if(typeof pData!=='undefined'){pData.gold=gold;savePData();}
 }
 function loadGame(){
@@ -1154,6 +1623,7 @@ function loadGame(){
         inv=d.inv||[];pName=d.pName||'Hero';
         if(d.cls)window._cls=d.cls;
         if(d.qStats)questStats=d.qStats;
+        if(d.storyChapter)storyChapter=d.storyChapter;
         console.log('Loaded! Lv.'+pLv);
     }catch(e){console.log('No save');}
 }
@@ -1168,7 +1638,7 @@ function showGameOver(){
     setTimeout(function(){
         scene.cameras.main.fade(2000,0,0,0,false,function(cam,prog){
             if(prog!==1)return;
-            var mLabels={adventure:'🌲 Adventure',survival:'🔥 Survival — Wave '+wave,bossrush:'💀 Boss Rush — Boss #'+rushIdx,pvp:'⚔️ PvP'};
+            var mLabels={adventure:'🌲 Adventure',survival:'🔥 Survival — Wave '+wave,bossrush:'💀 Boss Rush — Boss #'+rushIdx,pvp:'⚔️ PvP',story:'📖 Story — Chapter '+storyChapter};
             var ov=document.createElement('div');
             ov.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at center,#1a0000 0%,#000 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;opacity:0;transition:opacity 1.5s ease;font-family:Arial,sans-serif;color:#fff;';
             ov.innerHTML='<div style="text-align:center;max-width:540px;padding:32px;"><div style="font-size:84px;margin-bottom:10px;">💀</div><h1 style="font-size:52px;color:#ff2222;letter-spacing:6px;text-shadow:0 0 40px #f00;margin-bottom:5px;">GAME OVER</h1><p style="font-size:14px;color:#ffaa00;margin-bottom:3px;">'+mLabels[selectedMode]+'</p><p style="font-size:17px;color:#888;margin-bottom:3px;">'+(pClass?pClass.icon:'')+' <b>'+pName+'</b> — Level '+pLv+'</p><p style="font-size:22px;color:#ffdd44;margin-bottom:5px;">Score: '+score+'</p><p style="font-size:15px;color:#ffaa00;margin-bottom:22px;">💰 '+gold+' Gold earned</p><div style="display:flex;gap:12px;justify-content:center;"><button id="rBtn" style="padding:11px 30px;font-size:15px;background:linear-gradient(135deg,#aa0000,#dd2222);color:#fff;border:2px solid #ff4444;border-radius:10px;cursor:pointer;font-family:Arial;">⚔️ Play Again</button><button id="mBtn" style="padding:11px 30px;font-size:15px;background:#1a1a1a;color:#fff;border:2px solid #444;border-radius:10px;cursor:pointer;font-family:Arial;">🏠 Menu</button></div><p style="margin-top:12px;font-size:11px;color:#333;">Press R to restart</p></div>';
@@ -1176,13 +1646,14 @@ function showGameOver(){
             function restart(){
                 ov.style.opacity='0';setTimeout(function(){if(ov.parentNode)document.body.removeChild(ov);},1000);
                 pH=100;pMaxH=100;pXP=0;pLv=1;pSpd=200;pDmg=20;xpNext=100;score=0;
-                inv=[];bossSpawned=false;dim=0;survTimer=0;minions=[];wolfPets=[];berserking=false;invisible=false;inShadow=false;wave=0;rushIdx=0;normalTiles=[];shadowTiles=[];tombs=[];
+                inv=[];bossSpawned=false;dim=0;survTimer=0;minions=[];wolfPets=[];berserking=false;invisible=false;inShadow=false;wave=0;rushIdx=0;normalTiles=[];shadowTiles=[];tombs=[];storyNPCList=[];storyObjProgress=[];storyChapter=0;storyDone=false;storyLairTriggered=false;storyShadowKills=0;
                 gameStarted=false;window.gameStarted=false;
                 localStorage.removeItem('rpgSave');
                 scene.cameras.main.fadeIn(100);scene.scene.restart();
                 setTimeout(function(){
                     document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
                     var mm=document.getElementById('mainMenu');if(mm)mm.classList.add('active');
+                    hide('storyPanel');hide('storyDialog');
                 },500);
             }
             var rb=document.getElementById('rBtn'),mb=document.getElementById('mBtn');
@@ -1218,9 +1689,13 @@ function update(){
 
     if(moving)player.y+=Math.sin(Date.now()/120)*0.5;
     if(atkIndicator)atkIndicator.setPosition(player.x,player.y);
+
+    // Accessory overlay
+    if(accessoryOverlay)accessoryOverlay.setPosition(player.x,player.y-28);
+
     sendPos();
 
-    // SMOOTH MULTIPLAYER — lerp
+    // Smooth multiplayer lerp
     Object.values(otherPlayers).forEach(function(op){
         if(!op||!op.sprite)return;
         var lerp=0.18;
@@ -1235,7 +1710,11 @@ function update(){
     if(nameTxt)nameTxt.setPosition(player.x-40,player.y-60);
     potions.getChildren().forEach(function(p){if(p.lbl)p.lbl.setPosition(p.x-8,p.y-28);});
 
-    if(boss&&boss.active){var bdx=player.x-boss.x,bdy=player.y-boss.y,bd=Math.sqrt(bdx*bdx+bdy*bdy);if(bd>0){boss.setVelocityX(bdx/bd*boss.speed);boss.setVelocityY(bdy/bd*boss.speed);}boss.rotation+=0.015;}
+    if(boss&&boss.active){
+        var bdx=player.x-boss.x,bdy=player.y-boss.y,bd=Math.sqrt(bdx*bdx+bdy*bdy);
+        if(bd>0){boss.setVelocityX(bdx/bd*boss.speed);boss.setVelocityY(bdy/bd*boss.speed);}
+        boss.rotation+=0.015;
+    }
 
     minions.forEach(function(m){if(!m||!m.active)return;var dx=player.x-m.x,dy=player.y-m.y,d=Math.sqrt(dx*dx+dy*dy);if(d>80&&d>0){m.setVelocityX(dx/d*m.speed);m.setVelocityY(dy/d*m.speed);}else m.setVelocity(0);if(m.lbl)m.lbl.setPosition(m.x,m.y-28);});
     wolfPets.forEach(function(w){if(!w||!w.active)return;var cl=null,cd=300;enemies.getChildren().forEach(function(e){if(!e||!e.active)return;var d=Phaser.Math.Distance.Between(w.x,w.y,e.x,e.y);if(d<cd){cd=d;cl=e;}});if(cl){var wdx=cl.x-w.x,wdy=cl.y-w.y,wd=Math.sqrt(wdx*wdx+wdy*wdy);if(wd>0){w.setVelocityX(wdx/wd*w.speed);w.setVelocityY(wdy/wd*w.speed);}}else{var pdx=player.x-w.x,pdy=player.y-w.y,pd=Math.sqrt(pdx*pdx+pdy*pdy);if(pd>100&&pd>0){w.setVelocityX(pdx/pd*150);w.setVelocityY(pdy/pd*150);}else w.setVelocity(0);}if(w.lbl)w.lbl.setPosition(w.x,w.y-28);});
@@ -1249,4 +1728,32 @@ function update(){
         if(e.hpBar){e.hpBar.setPosition(e.x,e.y-35);e.hpBar.width=ms*(e.hp/e.maxHp);}
         if(e.tag)e.tag.setPosition(e.x,e.y-50);
     });
+
+    // Story NPC proximity check
+    if(storyMode&&!storyDialogActive){
+        storyNearNPC=null;
+        storyNPCList.forEach(function(npc){
+            if(!npc.sprite||!npc.sprite.active)return;
+            var d=Phaser.Math.Distance.Between(player.x,player.y,npc.x,npc.y);
+            if(d<90){
+                storyNearNPC=npc;
+                if(!npc.promptShown){
+                    npc.promptShown=true;
+                    if(storyNPCPrompt)storyNPCPrompt.destroy();
+                    storyNPCPrompt=scene.add.text(npc.x,npc.y-80,isMobile?'Tap: Talk':'[E] Talk',{fontSize:'13px',fill:'#ffff44',stroke:'#000',strokeThickness:3,backgroundColor:'rgba(0,0,0,0.5)',padding:{x:6,y:3}}).setOrigin(0.5).setDepth(20);
+                    scene.tweens.add({targets:storyNPCPrompt,y:npc.y-90,duration:600,yoyo:true,repeat:-1});
+                }
+            } else {
+                npc.promptShown=false;
+                if(storyNearNPC===npc){storyNearNPC=null;}
+            }
+        });
+        if(!storyNearNPC&&storyNPCPrompt){storyNPCPrompt.destroy();storyNPCPrompt=null;}
+
+        // Mobile: show/hide NPC talk button
+        if(isMobile){
+            var talkBtn=el('npcTalkBtn');
+            if(talkBtn) talkBtn.style.display = (storyNearNPC&&!storyDialogActive) ? 'block' : 'none';
+        }
+    }
 }
