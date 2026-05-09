@@ -151,19 +151,20 @@ canvas{display:block;}
 
 <!-- LOGIN SCREEN -->
 <div id="loginScreen" class="screen active">
-  <div style="font-size:44px;margin-bottom:-4px;">⚔️</div>
+  <div style="font-size:44px;margin-bottom:-4px;">&#9876;&#65039;</div>
   <div class="login-box">
     <div class="login-title">PIXEL WORLD RPG</div>
-    <div class="login-sub">Log in to keep your gold, skins &amp; classes on every device!</div>
-    <input id="loginEmail"    class="login-input" type="email"    placeholder="Email address">
-    <input id="loginPassword" class="login-input" type="password" placeholder="Password">
+    <div class="login-sub">Pick a username to save gold &amp; classes on every device!</div>
+    <input id="loginUser" class="login-input" type="text"     placeholder="Username  (e.g. CoolHero42)" maxlength="20" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <input id="loginPin"  class="login-input" type="password" placeholder="4-digit PIN  (e.g. 1234)"  maxlength="4"  inputmode="numeric" pattern="[0-9]*">
     <div id="loginErr" class="login-err"></div>
-    <button class="login-btn" id="loginBtn"    onclick="doLogin()">🔑 Log In</button>
-    <div class="login-or">— or —</div>
-    <button class="login-btn" id="registerBtn" onclick="doRegister()">📝 Create Account</button><br>
-    <button class="login-btn" id="guestBtn"    onclick="doGuest()">👤 Play as Guest (saves locally only)</button>
+    <button class="login-btn" id="loginBtn"    onclick="doLogin()">&#128273; Log In / Create Account</button>
+    <div class="login-or">&#8212; or &#8212;</div>
+    <button class="login-btn" id="guestBtn"    onclick="doGuest()">&#128100; Play as Guest (local save only)</button>
   </div>
-  <p style="font-size:10px;color:#2a2a3a;">Passwords are secured by Firebase Auth.</p>
+  <p style="font-size:10px;color:#2a2a3a;text-align:center;max-width:300px;margin:0 auto;">
+    First time? It creates your account automatically.<br>Same username + PIN on any device = your data syncs!
+  </p>
 </div>
 
 <!-- MAIN MENU -->
@@ -297,20 +298,20 @@ canvas{display:block;}
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<!-- No Firebase Auth needed - using DB-based login -->
 <script>
 var firebaseConfig={apiKey:"AIzaSyDMS1BvpwEHcOkhsove5MKVgUiso1cj6w4",authDomain:"pixel-world-rpg.firebaseapp.com",databaseURL:"https://pixel-world-rpg-default-rtdb.europe-west1.firebasedatabase.app",projectId:"pixel-world-rpg",storageBucket:"pixel-world-rpg.firebasestorage.app",messagingSenderId:"567750829335",appId:"1:567750829335:web:7e46e33a35a6d8076f4352"};
 firebase.initializeApp(firebaseConfig);
-var db=firebase.database();var auth=firebase.auth();
+var db=firebase.database();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
 <script>
 // ── PERSISTENT DATA (never lost on updates) ────────────────────
 var pData={gold:0,classes:[],skins:[],passXP:0,passLevel:0,passUnlocked:false,titles:[],activeTitle:''};
 function loadPData(){try{var s=localStorage.getItem('rpgPData');if(s){var d=JSON.parse(s);if(d)Object.assign(pData,d);}}catch(e){}}
-function savePData(){try{localStorage.setItem('rpgPData',JSON.stringify(pData));}catch(e){}if(window._uid){try{db.ref('users/'+window._uid+'/pData').set(pData);}catch(e){}}}
+function savePData(){try{localStorage.setItem('rpgPData',JSON.stringify(pData));}catch(e){}if(window._uid){try{db.ref('accounts/'+window._uid+'/pData').set(pData);}catch(e){}}}
 function loadFromCloud(uid){
-  db.ref('users/'+uid+'/pData').once('value').then(function(snap){
+  db.ref('accounts/'+uid+'/pData').once('value').then(function(snap){
     var d=snap.val();if(d){
       var lg=pData.gold||0;Object.assign(pData,d);pData.gold=Math.max(pData.gold||0,lg);
       var merge=function(a,b){var r=(a||[]).concat(b||[]);return r.filter(function(v,i){return r.indexOf(v)===i;});};
@@ -320,13 +321,33 @@ function loadFromCloud(uid){
   }).catch(function(){refreshGoldUI();});
 }
 loadPData();
-window._uid=null;
-auth.onAuthStateChanged(function(user){if(user){window._uid=user.uid;loadFromCloud(user.uid);showMenu();}});
-function doLogin(){var e=v('loginEmail'),p=v('loginPassword');if(!e||!p){setErr('Enter email and password.');return;}auth.signInWithEmailAndPassword(e,p).then(function(){setErr('');}).catch(function(er){setErr(aErr(er));});}
-function doRegister(){var e=v('loginEmail'),p=v('loginPassword');if(!e||!p){setErr('Enter email and password.');return;}if(p.length<6){setErr('Password needs 6+ characters.');return;}auth.createUserWithEmailAndPassword(e,p).then(function(){setErr('');}).catch(function(er){setErr(aErr(er));});}
+window._uid = null;
+// USERNAME + PIN LOGIN — uses Firebase DB directly, no Auth console setup needed
+function doLogin(){
+  var user=v('loginUser').toLowerCase().replace(/[^a-z0-9_]/g,'');
+  var pin=v('loginPin').replace(/[^0-9]/g,'');
+  if(!user){setErr('Enter a username.');return;}
+  if(user.length<3){setErr('Username needs at least 3 characters.');return;}
+  if(pin.length!==4){setErr('PIN must be exactly 4 digits, e.g. 1234');return;}
+  setErr('Checking...');
+  db.ref('accounts/'+user).once('value').then(function(snap){
+    var acc=snap.val();
+    if(!acc){
+      // New account
+      db.ref('accounts/'+user).set({pin:pin,created:Date.now()}).then(function(){
+        window._uid=user; loadFromCloud(user); setErr(''); showMenu();
+      }).catch(function(){setErr('Could not create account. Check internet connection.');});
+    } else {
+      if(acc.pin!==pin){setErr('Wrong PIN. Try again.');return;}
+      window._uid=user; loadFromCloud(user); setErr(''); showMenu();
+    }
+  }).catch(function(){
+    setErr('Offline — using local save.');
+    window._uid=null; setTimeout(showMenu,1400);
+  });
+}
 function doGuest(){window._uid=null;showMenu();}
-function doLogout(){auth.signOut().then(function(){window._uid=null;document.getElementById('mainMenu').classList.remove('active');document.getElementById('loginScreen').classList.add('active');});}
-function aErr(e){var m={['auth/user-not-found']:'No account with that email.','auth/wrong-password':'Wrong password.','auth/email-already-in-use':'Email already registered.','auth/invalid-email':'Invalid email.','auth/weak-password':'Password too weak (6+ chars).'};return m[e.code]||e.message||'Something went wrong.';}
+function doLogout(){window._uid=null;document.getElementById('mainMenu').classList.remove('active');document.getElementById('loginScreen').classList.add('active');}
 function setErr(m){var e=document.getElementById('loginErr');if(e)e.textContent=m;}
 function v(id){var e=document.getElementById(id);return e?e.value.trim():'';}
 function showMenu(){document.getElementById('loginScreen').classList.remove('active');document.getElementById('mainMenu').classList.add('active');refreshGoldUI();buildClassGrid();buildSkinGrid();buildPassTab();buildTitleGrid();}
