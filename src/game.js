@@ -72,6 +72,28 @@ var POOL_SHADOW = {
     banshee: { name:'🌀 Banshee',color:0x00aaff,size:34,hp:38,speed:155,dmg:32,xp:48,score:36,gold:18 },
     lich:    { name:'☠️ Lich',   color:0x440088,size:50,hp:110,speed:58,dmg:38,xp:75,score:58,gold:28 }
 };
+// ================================
+// CASTLE STORY POOLS
+// ================================
+var POOL_CASTLE = {
+    guard:       { name:'⚔️ Castle Guard',    color:0x4466aa, size:40, hp:70,  speed:70,  dmg:18, xp:35, score:22, gold:12 },
+    crossbowman: { name:'🏹 Crossbowman',     color:0x6688cc, size:36, hp:45,  speed:100, dmg:22, xp:28, score:18, gold:10 },
+    shieldbearer:{ name:'🛡️ Shield Bearer',  color:0x335588, size:48, hp:110, speed:50,  dmg:14, xp:45, score:30, gold:14 }
+};
+var POOL_CASTLE_CH2 = {
+    darkknight: { name:'🗡️ Dark Knight',  color:0x222255, size:46, hp:100, speed:60,  dmg:28, xp:55, score:38, gold:18 },
+    shadowguard:{ name:'👁️ Shadow Guard', color:0x330055, size:38, hp:70,  speed:95,  dmg:24, xp:45, score:32, gold:15 }
+};
+var POOL_CASTLE_CH3 = {
+    shadowsentry:{ name:'🌑 Shadow Sentry', color:0x220033, size:40, hp:90,  speed:85,  dmg:26, xp:50, score:36, gold:16 },
+    voidwalker:  { name:'💜 Void Walker',   color:0x440066, size:36, hp:65,  speed:115, dmg:30, xp:42, score:28, gold:14 }
+};
+// ================================
+// CASTLE STORY BOSSES
+// ================================
+var BOSS_VEX          = { name:'⚔️ Commander Vex',  bc:0x1a1a44, ec:0x4466ff, mc:0x2244aa, bar:0x4466ff, hp:500,  speed:65, xp:350, gold:180 };
+var BOSS_SHADOW_MASTER = { name:'🌑 Shadow Master',  bc:0x110022, ec:0xaa00ff, mc:0x6600aa, bar:0xaa00ff, hp:650,  speed:75, xp:450, gold:220 };
+var BOSS_DARK_KING     = { name:'👑 The Dark King',  bc:0x1a0033, ec:0xff00aa, mc:0xcc0066, bar:0xff0066, hp:900,  speed:60, xp:600, gold:400 };
 
 // ================================
 // BOSSES per mode
@@ -101,51 +123,52 @@ var QUESTS = [
 ];
 
 // ================================
-// STORY MODE DATA
+// STORY MODE DATA — Castle Story
 // ================================
 var STORY_DATA = [
     {
-        num:1, title:'📖 Chapter 1: A Hero\'s Call', color:'#88ff88',
-        npcId:'elder',
+        num:1, title:'📖 Ch.1: The Castle Gates', color:'#88aaff',
+        npcId:'prisoner',
         dialog:[
-            {speaker:'👴 Elder Oaken', text:'"Welcome, brave hero! Dark times are upon us. Goblin raiders attack our village every night..."'},
-            {speaker:'👴 Elder Oaken', text:'"Please — defeat 8 goblins and 3 trolls to drive them away. The forest will be yours to explore safely again!"'},
-            {speaker:'👴 Elder Oaken', text:'"Return to me when you are done. Courage, hero! ⚔️"'}
+            {speaker:'🧑 Escaped Prisoner', text:'"Please help! The Dark King\'s soldiers captured our village and locked us in this courtyard!"'},
+            {speaker:'🧑 Escaped Prisoner', text:'"Fight through his guards — castle guards and crossbowmen patrol everywhere. Show them no mercy! ⚔️"'},
+            {speaker:'🧑 Escaped Prisoner', text:'"Clear the courtyard and I\'ll find a way to get you inside the castle. The Dark King must be stopped! 🏰"'}
         ],
         objectives:[
-            {id:'kill_goblin', desc:'Kill 8 Goblins',  type:'kill', monster:'goblin', target:8, n:0, done:false},
-            {id:'kill_troll',  desc:'Kill 3 Trolls',   type:'kill', monster:'troll',  target:3, n:0, done:false}
+            {id:'kill_guard',    desc:'Defeat 10 Castle Guards', type:'kill', monster:'guard',       target:10, n:0, done:false},
+            {id:'kill_crossbow', desc:'Defeat 4 Crossbowmen',    type:'kill', monster:'crossbowman', target:4,  n:0, done:false}
         ],
-        reward:200, rewardMsg:'🌟 Village saved! Elder Oaken gives you 200 gold!'
+        reward:200, rewardMsg:'🏆 Courtyard cleared! The prisoner cheers — +200 gold!'
     },
     {
-        num:2, title:'📖 Chapter 2: Shadows Stir', color:'#cc88ff',
-        npcId:'scout',
+        num:2, title:'📖 Ch.2: Into the Castle', color:'#cc88ff',
+        npcId:'spy',
+        cutscene:true,
         dialog:[
-            {speaker:'🏕️ Scout Finn', text:'"Something evil stirs near the shadow portal to the south-east. I can feel it..."'},
-            {speaker:'🏕️ Scout Finn', text:'"The Shadow Wraith is corrupting the realm! Enter the portal and fight through the shadow enemies!"'},
-            {speaker:'🏕️ Scout Finn', text:'"Defeat the Shadow Wraith before it escapes into our world. Be careful — it\'s powerful! 💀"'}
+            {speaker:'🕵️ Rebel Spy', text:'"You made it inside! The Dark King\'s right hand — Commander Vex — commands this hall."'},
+            {speaker:'🕵️ Rebel Spy', text:'"His Dark Knights are everywhere. Cut through them first, then face Vex himself. He\'s brutal but beatable!"'},
+            {speaker:'🕵️ Rebel Spy', text:'"The throne room lies beyond. Vex must fall — for the realm! 💪"'}
         ],
         objectives:[
-            {id:'enter_shadow', desc:'Enter the Shadow Portal', type:'event', key:'shadow_entered', target:1, n:0, done:false},
-            {id:'shadow_kills', desc:'Defeat 5 Shadow Enemies', type:'shadow_kill', target:5, n:0, done:false},
-            {id:'shadow_boss',  desc:'Defeat the Shadow Wraith',type:'boss', target:1, n:0, done:false}
+            {id:'kill_darkknight', desc:'Defeat 8 Dark Knights',     type:'kill', monster:'darkknight', target:8, n:0, done:false},
+            {id:'kill_vex',        desc:'Defeat Commander Vex',      type:'boss', target:1, n:0, done:false}
         ],
-        reward:300, rewardMsg:'🌟 Shadows retreat! Scout Finn cheers — +300 gold!'
+        reward:350, rewardMsg:'🏆 Commander Vex falls! The throne room is open — +350 gold!'
     },
     {
-        num:3, title:'📖 Chapter 3: Dragon\'s Wrath', color:'#ffaa44',
-        npcId:'blacksmith',
+        num:3, title:'📖 Ch.3: The Dark Throne', color:'#ffaa44',
+        npcId:'wizard',
         dialog:[
-            {speaker:'⚒️ Blacksmith Bram', text:'"I have felt the ground shake — the Dragon King has awakened in the heart of the forest!"'},
-            {speaker:'⚒️ Blacksmith Bram', text:'"I forged you a legendary blade from dragon-steel. You\'re the only one strong enough!"'},
-            {speaker:'⚒️ Blacksmith Bram', text:'"Go to the center of the forest and end this once and for all. The whole realm is counting on you! 🐉🔥"'}
+            {speaker:'🧙 Court Mage', text:'"You reached the throne room! The Dark King is shielded by shadow magic — he cannot be harmed directly!"'},
+            {speaker:'🧙 Court Mage', text:'"His Shadow Master maintains the shield. Destroy the shadow sentries protecting him, then face the Shadow Master!"'},
+            {speaker:'🧙 Court Mage', text:'"Once the Shadow Master falls, the Dark King is exposed. Strike him down — the realm is counting on you! 🔮"'}
         ],
         objectives:[
-            {id:'reach_lair',  desc:'Dragon King appears!',   type:'auto', target:1, n:0, done:false},
-            {id:'kill_dragon', desc:'Defeat the Dragon King', type:'boss', target:1, n:0, done:false}
+            {id:'kill_shadowsentry', desc:'Defeat 6 Shadow Sentries',  type:'kill',       monster:'shadowsentry', target:6, n:0, done:false},
+            {id:'kill_shadowmaster', desc:'Defeat the Shadow Master',   type:'story_boss', target:1, n:0, done:false},
+            {id:'kill_darkking',     desc:'Defeat The Dark King',       type:'boss',       target:1, n:0, done:false}
         ],
-        reward:1000, rewardMsg:'🏆 LEGENDARY VICTORY! Dragon King defeated! You earn the title: Dragon Slayer!'
+        reward:1000, rewardMsg:'🏆 THE DARK KING IS DEFEATED! The realm is free! +1000 gold + title: Dark King Slayer!'
     }
 ];
 
@@ -199,6 +222,7 @@ var storyShadowKills=0;
 var storyChapterComplete=false;
 var storyDone=false;
 var storyLairTriggered=false;
+var storyBossPhase=0; // 0=none, 1=shadow master alive, 2=dark king alive
 var accessoryOverlay=null;
 
 // ================================
@@ -268,6 +292,7 @@ function checkQ(type,data){
 function finishQuest(q){
     S.quest(); score+=q.reward; if(scoreTxt)scoreTxt.setText('Score: '+score);
     earnGold(Math.floor(q.reward/5)); gainXP(q.xpR);
+    addPassXP(50);
     if(player)float('📜 Quest! +'+q.reward,player.x-80,player.y-100,'#ffaa00');
     addMsg('Quest','✅ '+q.desc,'#ffaa00');
     setTimeout(function(){
@@ -302,6 +327,49 @@ function earnGold(amount){
     setText('goldHUD','💰 '+gold+' Gold');
     if(typeof pData!=='undefined'){pData.gold=gold;savePData();}
     S.gold();
+}
+
+// ================================
+// BATTLE PASS XP
+// ================================
+function addPassXP(amount){
+    if(typeof pData==='undefined'||typeof PASS_REWARDS==='undefined')return;
+    pData.passXP=(pData.passXP||0)+amount;
+    var XP_PER_LEVEL=500;
+    while(pData.passXP>=XP_PER_LEVEL&&(pData.passLevel||0)<10){
+        pData.passXP-=XP_PER_LEVEL;
+        pData.passLevel=(pData.passLevel||0)+1;
+        var lv=pData.passLevel;
+        // Auto-grant rewards for this level
+        var rwd=PASS_REWARDS.find(function(r){return r.lv===lv;});
+        if(rwd){
+            grantPassRwdToPlayer(rwd.free);
+            if(pData.passUnlocked)grantPassRwdToPlayer(rwd.pass);
+        }
+        if(player)float('🎫 Pass Level '+lv+'!',player.x-100,player.y-110,'#ffdd44');
+        addMsg('System','🎫 Battle Pass Level '+lv+'!','#ffdd44');
+        S.story();
+    }
+    savePData();
+    if(typeof buildPassTab==='function')buildPassTab();
+}
+function grantPassRwdToPlayer(r){
+    if(!r)return;
+    if(r.type==='gold'&&r.amount){earnGold(r.amount);}
+    else if(r.type==='title'&&r.value){
+        if(!pData.titles)pData.titles=[];
+        if(pData.titles.indexOf(r.value)===-1){
+            pData.titles.push(r.value);
+            if(player)float('🏅 '+r.value,player.x-120,player.y-90,'#ffcc44');
+        }
+    }
+    else if(r.type==='class'&&r.value){
+        if(!pData.classes)pData.classes=[];
+        if(pData.classes.indexOf(r.value)===-1){
+            pData.classes.push(r.value);
+            if(player)float('🎮 Class: '+r.value,player.x-140,player.y-90,'#88ffaa');
+        }
+    }
 }
 
 // ================================
@@ -457,8 +525,8 @@ function startGame(){
     enemies=scene.physics.add.group();
     potions=scene.physics.add.group();
 
-    // Portals only in adventure + story
-    if(selectedMode==='adventure'||selectedMode==='story'){
+    // Portals only in adventure mode
+    if(selectedMode==='adventure'){
         buildPortals();
         scene.physics.add.overlap(player,portals,onPortal,null,scene);
     }
@@ -473,7 +541,7 @@ function startGame(){
     setupKeys();
     buildUI();
     buildInv();
-    if(selectedMode==='adventure'||selectedMode==='story') startDayNight();
+    if(selectedMode==='adventure') startDayNight();
     startSurvTimer();
     setupJoystick();
     connectServer();
@@ -504,7 +572,7 @@ function startGame(){
 }
 
 function bgCol(){
-    var m={adventure:'#1a5c1a',survival:'#3d1a00',bossrush:'#0d0011',pvp:'#1a1a22',story:'#1a5c1a'};
+    var m={adventure:'#1a5c1a',survival:'#3d1a00',bossrush:'#0d0011',pvp:'#1a1a22',story:'#0d0d1a'};
     return m[selectedMode]||'#1a5c1a';
 }
 
@@ -512,12 +580,14 @@ function bgCol(){
 // BUILD MAP
 // ================================
 function buildMap(){
-    if(selectedMode==='adventure'||selectedMode==='story') buildForest();
+    if(selectedMode==='adventure') buildForest();
+    else if(selectedMode==='story') buildCastle();
     else if(selectedMode==='survival') buildLava();
     else if(selectedMode==='bossrush') buildDungeon();
     else if(selectedMode==='pvp')      buildArena();
 
-    if(selectedMode==='adventure'||selectedMode==='story'){
+    // Shadow tiles only in adventure mode
+    if(selectedMode==='adventure'){
         for(var sx=0;sx<mW;sx++) for(var sy=0;sy<mH;sy++)
             shadowTiles.push(scene.add.rectangle(sx*tSz+tSz/2,sy*tSz+tSz/2,tSz-1,tSz-1,(sx+sy)%2===0?0x1a0033:0x110022).setVisible(false));
         [{x:3,y:3},{x:9,y:6},{x:14,y:2},{x:19,y:9}].forEach(function(p){
@@ -567,6 +637,64 @@ function buildForest(){
         scene.add.rectangle(3*tSz,3*tSz,5*tSz,3*tSz,0x886633,0.15).setOrigin(0,0);
         scene.add.text(3*tSz+10,3*tSz+6,'🏘️ Village',{fontSize:'13px',fill:'#ffcc88',stroke:'#000',strokeThickness:2});
     }
+}
+
+// STORY: Castle map — south=gate/courtyard, north=throne room
+function buildCastle(){
+    for(var x=0;x<mW;x++) for(var y=0;y<mH;y++){
+        var c;
+        if(x<2||x>=mW-2||y<2||y>=mH-2){
+            // Moat (outer 2 tiles) — dark blue water
+            c=0x1133aa;
+        } else if(x<4||x>=mW-4||y<4||y>=mH-4){
+            // Castle outer wall
+            c=(x+y)%2===0?0x222233:0x1e1e2e;
+        } else if(y<8){
+            // Throne room — dark red carpet
+            c=(x+y)%2===0?0x4a1a1a:0x3a1414;
+        } else if(y<14){
+            // Inner hall (chapter 2)
+            c=(x+y)%2===0?0x303044:0x282838;
+        } else {
+            // Main courtyard (chapter 1 + 3)
+            c=(x+y)%2===0?0x484858:0x3c3c4c;
+        }
+        normalTiles.push(scene.add.rectangle(x*tSz+tSz/2,y*tSz+tSz/2,tSz-1,tSz-1,c));
+    }
+    // Inner castle wall (divides courtyard from inner hall)
+    for(var cx=4;cx<24;cx++){
+        if(cx===13||cx===14)continue; // center opening
+        scene.add.rectangle(cx*tSz+tSz/2,14*tSz-tSz/2,tSz-2,12,0x111122).setDepth(2);
+    }
+    // Throne room gate (divides hall from throne room)
+    for(var cx=4;cx<24;cx++){
+        if(cx===13||cx===14)continue;
+        scene.add.rectangle(cx*tSz+tSz/2,8*tSz-tSz/2,tSz-2,12,0x2a0a0a).setDepth(2);
+    }
+    // Pillars in courtyard
+    [[6,16],[14,16],[22,16],[6,20],[14,20],[22,20]].forEach(function(p){
+        scene.add.rectangle(p[0]*tSz+tSz/2,p[1]*tSz+tSz/2,20,38,0x111122).setDepth(2);
+    });
+    // Pillars in inner hall
+    [[7,9],[14,9],[21,9],[7,12],[14,12],[21,12]].forEach(function(p){
+        scene.add.rectangle(p[0]*tSz+tSz/2,p[1]*tSz+tSz/2,18,34,0x110033).setDepth(2);
+    });
+    // Throne decoration
+    scene.add.rectangle(14*tSz+tSz/2,5*tSz,60,50,0x880000).setOrigin(0.5,0.5).setDepth(2);
+    scene.add.text(14*tSz+tSz/2,5*tSz,'👑',{fontSize:'30px'}).setOrigin(0.5,0.5).setDepth(3);
+    // Torches on walls (flickering)
+    [[4,9],[4,12],[4,17],[4,21],[23,9],[23,12],[23,17],[23,21]].forEach(function(p){
+        var tx=p[0]*tSz+tSz/2, ty=p[1]*tSz+tSz/2;
+        var t=scene.add.triangle(tx,ty,-5,10,5,10,0,-12,0xffaa00).setDepth(3);
+        scene.tweens.add({targets:t,alpha:0.4,scaleX:0.7,duration:250+Math.random()*200,yoyo:true,repeat:-1});
+        scene.add.circle(tx,ty,18,0xffaa00,0.1).setDepth(2);
+    });
+    // Gate arch at south wall
+    scene.add.text(14*tSz+tSz/2,24*tSz+8,'🏰 Castle Gate',{fontSize:'11px',fill:'#aaaacc',stroke:'#000',strokeThickness:2,align:'center'}).setOrigin(0.5,0).setDepth(3);
+    // Chapter area labels
+    scene.add.text(14*tSz,18*tSz,'⚔️ Courtyard',{fontSize:'11px',fill:'#8888aa',stroke:'#000',strokeThickness:2,align:'center'}).setOrigin(0.5).setDepth(1);
+    scene.add.text(14*tSz,11*tSz,'🏰 Inner Hall',{fontSize:'11px',fill:'#8888bb',stroke:'#000',strokeThickness:2,align:'center'}).setOrigin(0.5).setDepth(1);
+    scene.add.text(14*tSz,6*tSz,'☠️ Throne Room',{fontSize:'11px',fill:'#aa6666',stroke:'#000',strokeThickness:2,align:'center'}).setOrigin(0.5).setDepth(1);
 }
 
 // SURVIVAL: Lava fortress
@@ -738,7 +866,10 @@ function makeExtraTex(){
 }
 
 function createPlayer(){
-    player=scene.physics.add.image(mW/2*tSz,mH/2*tSz,'playerTex');
+    // Story mode: spawn near the castle gate (south area)
+    var spawnX = mW/2*tSz;
+    var spawnY = storyMode ? 22*tSz : mH/2*tSz;
+    player=scene.physics.add.image(spawnX,spawnY,'playerTex');
     scene.physics.world.setBounds(0,0,mW*tSz,mH*tSz);
     player.setCollideWorldBounds(true);
     atkIndicator=scene.add.circle(player.x,player.y,pRange,0xffffff,0).setStrokeStyle(1,0xffffff,0.12).setDepth(8);
@@ -890,59 +1021,82 @@ function modePvp(){
         {fontSize:'16px',fill:'#ff88ff',stroke:'#000',strokeThickness:3,align:'center'}).setOrigin(0.5).setDepth(6);
 }
 function modeStory(){
-    spawnInitial();
-    addMsg('System','📖 Story Mode! Talk to NPCs (walk near them and press E)','#ffcc44');
-    float('📖 Story Mode begins!',player.x-120,player.y-90,'#ffcc44');
+    curPool=POOL_CASTLE;
+    for(var i=0;i<8;i++) spawnEnemy(null,POOL_CASTLE);
+    addMsg('System','📖 Castle Story! Talk to NPCs (walk near them and press E)','#ffcc44');
+    float('📖 Castle Story begins!',player.x-120,player.y-90,'#88aaff');
 }
 
 // ================================
 // STORY MODE FUNCTIONS
 // ================================
 function spawnStoryNPCs(){
-    // Elder Oaken — in village area (top-left of forest)
-    var elderX=4*tSz, elderY=5*tSz;
-    var elderSprite=scene.physics.add.image(elderX,elderY,'npcElderTex').setDepth(5).setImmovable(true);
-    var elderAnim=scene.tweens.add({targets:elderSprite,y:elderY-5,duration:1000,yoyo:true,repeat:-1});
-    var elderTag=scene.add.text(elderX,elderY-60,'👴 Elder Oaken\n[E] Talk',{fontSize:'11px',fill:'#ffcc88',stroke:'#000',strokeThickness:2,align:'center'}).setOrigin(0.5).setDepth(6);
-    storyNPCList.push({sprite:elderSprite,tag:elderTag,id:'elder',x:elderX,y:elderY,chapter:1});
+    // Escaped Prisoner — near the castle gate (south courtyard, chapter 1)
+    var prisonX=10*tSz, prisonY=22*tSz;
+    var prisonSprite=scene.physics.add.image(prisonX,prisonY,'npcElderTex').setDepth(5).setImmovable(true);
+    scene.tweens.add({targets:prisonSprite,y:prisonY-5,duration:1000,yoyo:true,repeat:-1});
+    var prisonTag=scene.add.text(prisonX,prisonY-60,'🧑 Prisoner\n[E] Talk',{fontSize:'11px',fill:'#88aaff',stroke:'#000',strokeThickness:2,align:'center'}).setOrigin(0.5).setDepth(6);
+    storyNPCList.push({sprite:prisonSprite,tag:prisonTag,id:'prisoner',x:prisonX,y:prisonY,chapter:1});
 
-    // Scout Finn — near the shadow portal (SE area)
-    var scoutX=18*tSz, scoutY=20*tSz;
-    var scoutSprite=scene.physics.add.image(scoutX,scoutY,'npcScoutTex').setDepth(5).setImmovable(true);
-    scene.tweens.add({targets:scoutSprite,y:scoutY-5,duration:900,yoyo:true,repeat:-1});
-    var scoutTag=scene.add.text(scoutX,scoutY-60,'🏕️ Scout Finn\n[E] Talk',{fontSize:'11px',fill:'#88ff88',stroke:'#000',strokeThickness:2,align:'center'}).setOrigin(0.5).setDepth(6);
-    storyNPCList.push({sprite:scoutSprite,tag:scoutTag,id:'scout',x:scoutX,y:scoutY,chapter:2});
+    // Rebel Spy — near inner castle gate (central hall, chapter 2)
+    var spyX=17*tSz, spyY=15*tSz;
+    var spySprite=scene.physics.add.image(spyX,spyY,'npcScoutTex').setDepth(5).setImmovable(true);
+    scene.tweens.add({targets:spySprite,y:spyY-5,duration:900,yoyo:true,repeat:-1});
+    var spyTag=scene.add.text(spyX,spyY-60,'🕵️ Rebel Spy\n[E] Talk',{fontSize:'11px',fill:'#cc88ff',stroke:'#000',strokeThickness:2,align:'center'}).setOrigin(0.5).setDepth(6);
+    storyNPCList.push({sprite:spySprite,tag:spyTag,id:'spy',x:spyX,y:spyY,chapter:2});
 
-    // Blacksmith Bram — bottom-left area
-    var smithX=5*tSz, smithY=22*tSz;
-    var smithSprite=scene.physics.add.image(smithX,smithY,'npcSmithTex').setDepth(5).setImmovable(true);
-    scene.tweens.add({targets:smithSprite,y:smithY-5,duration:1100,yoyo:true,repeat:-1});
-    var smithTag=scene.add.text(smithX,smithY-60,'⚒️ Blacksmith Bram\n[E] Talk',{fontSize:'11px',fill:'#ffaa44',stroke:'#000',strokeThickness:2,align:'center'}).setOrigin(0.5).setDepth(6);
-    storyNPCList.push({sprite:smithSprite,tag:smithTag,id:'blacksmith',x:smithX,y:smithY,chapter:3});
+    // Court Mage — near throne room entrance (chapter 3)
+    var mageX=11*tSz, mageY=9*tSz;
+    var mageSprite=scene.physics.add.image(mageX,mageY,'npcSmithTex').setDepth(5).setImmovable(true);
+    scene.tweens.add({targets:mageSprite,y:mageY-5,duration:1100,yoyo:true,repeat:-1});
+    var mageTag=scene.add.text(mageX,mageY-60,'🧙 Court Mage\n[E] Talk',{fontSize:'11px',fill:'#ffaa44',stroke:'#000',strokeThickness:2,align:'center'}).setOrigin(0.5).setDepth(6);
+    storyNPCList.push({sprite:mageSprite,tag:mageTag,id:'wizard',x:mageX,y:mageY,chapter:3});
+}
+
+function showStoryCutscene(text, color){
+    var ov=document.createElement('div');
+    ov.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;z-index:500;opacity:0;transition:opacity 0.8s;pointer-events:none;';
+    ov.innerHTML='<div style="max-width:500px;padding:36px;text-align:center;"><div style="font-size:52px;margin-bottom:16px;">🏰</div><p style="font-size:18px;color:'+(color||'#ccccff')+';line-height:1.7;font-style:italic;text-shadow:0 0 20px rgba(150,150,255,0.5);">'+text+'</p></div>';
+    document.body.appendChild(ov);
+    setTimeout(function(){ov.style.opacity='1';},50);
+    setTimeout(function(){ov.style.opacity='0';setTimeout(function(){if(ov.parentNode)document.body.removeChild(ov);},800);},3500);
 }
 
 function beginStoryChapter(num){
     storyChapter=num;
     storyChapterComplete=false;
+    storyBossPhase=0;
+    bossSpawned=false;
+    if(boss){try{boss.destroy();}catch(e){}boss=null;}
+    if(bossHPBg)bossHPBg.destroy();if(bossHPBar)bossHPBar.destroy();if(bossTxt)bossTxt.destroy();
+
     var chData=STORY_DATA[num-1];
     if(!chData)return;
-    // Deep copy objectives
     storyObjProgress=chData.objectives.map(function(o){return{id:o.id,desc:o.desc,type:o.type,monster:o.monster,key:o.key,target:o.target,n:0,done:false};});
 
-    // Chapter 3: auto-complete reach_lair and spawn dragon
-    if(num===3){
-        storyObjProgress[0].n=1;storyObjProgress[0].done=true;
-        storyLairTriggered=true;
-        setTimeout(function(){if(gameStarted)spawnBoss('adv');},2000);
-        float('🐉 Dragon King awakens!',player.x-140,player.y-100,'#ff8800');
-        S.boss();
+    // Clear existing enemies for new chapter
+    enemies.getChildren().slice().forEach(function(e){
+        if(e.hpBar)e.hpBar.destroy();if(e.tag)e.tag.destroy();e.destroy();
+    });
+
+    // Set pool + spawn enemies for this chapter
+    if(num===1){
+        curPool=POOL_CASTLE;
+        for(var i=0;i<8;i++) spawnEnemy(null,POOL_CASTLE);
+    } else if(num===2){
+        curPool=POOL_CASTLE_CH2;
+        if(chData.cutscene) showStoryCutscene('You force open the castle doors and step into the dark hall...\n\nCommander Vex commands his Dark Knights — destroy the intruder!','#cc88ff');
+        for(var i=0;i<8;i++) spawnEnemy(null,POOL_CASTLE_CH2);
+    } else if(num===3){
+        curPool=POOL_CASTLE_CH3;
+        showStoryCutscene('You enter the throne room... shadow magic fills the air.\n\nThe Shadow Master blocks your path to The Dark King!','#ffaa44');
+        for(var i=0;i<6;i++) spawnEnemy(null,POOL_CASTLE_CH3);
     }
 
     setText('storyChapterTitle',chData.title);
     renderStoryPanel();
     float(chData.title,player.x-160,player.y-110,chData.color);
     S.story();
-
     var mh=el('modeHUD');if(mh){mh.textContent=chData.title;mh.style.color=chData.color;}
 }
 
@@ -962,13 +1116,32 @@ function updateStoryObj(type,data){
     var changed=false;
     storyObjProgress.forEach(function(o){
         if(o.done)return;
-        if(type==='kill'&&(o.type==='kill')&&o.monster===data){o.n=Math.min(o.n+1,o.target);if(o.n>=o.target)o.done=true;changed=true;}
+        if(type==='kill'&&o.type==='kill'&&o.monster===data){o.n=Math.min(o.n+1,o.target);if(o.n>=o.target)o.done=true;changed=true;}
         if(type==='shadow_kill'&&o.type==='shadow_kill'){o.n=Math.min(o.n+1,o.target);if(o.n>=o.target)o.done=true;changed=true;}
         if(type==='event'&&o.type==='event'&&o.key===data){o.n=1;o.done=true;changed=true;}
         if(type==='boss'&&o.type==='boss'){o.n=1;o.done=true;changed=true;}
+        if(type==='story_boss_kill'&&o.type==='story_boss'){o.n=1;o.done=true;changed=true;}
     });
     if(changed)renderStoryPanel();
-    // Check if all objectives done
+
+    // Chapter 2: after all dark knights killed → spawn Commander Vex
+    if(storyChapter===2 && !bossSpawned){
+        var knightsDone=storyObjProgress.some(function(o){return o.id==='kill_darkknight'&&o.done;});
+        if(knightsDone){
+            setTimeout(function(){if(gameStarted)spawnStoryBoss('vex');},1500);
+            float('⚔️ Commander Vex approaches!',player.x-130,player.y-100,'#4466ff');
+        }
+    }
+    // Chapter 3: after all shadow sentries killed → spawn Shadow Master
+    if(storyChapter===3 && storyBossPhase===0 && !bossSpawned){
+        var sentriesDone=storyObjProgress.some(function(o){return o.id==='kill_shadowsentry'&&o.done;});
+        if(sentriesDone){
+            storyBossPhase=1;
+            setTimeout(function(){if(gameStarted)spawnStoryBoss('shadowmaster');},1500);
+            float('🌑 Shadow Master approaches!',player.x-130,player.y-100,'#aa44ff');
+        }
+    }
+
     var allDone=storyObjProgress.every(function(o){return o.done;});
     if(allDone&&!storyChapterComplete)completeStoryChapter();
 }
@@ -978,21 +1151,30 @@ function completeStoryChapter(){
     var chData=STORY_DATA[storyChapter-1];
     S.story(); S.story();
     earnGold(chData.reward);
+    addPassXP(200);
     scene.cameras.main.flash(1000,255,255,100);
     float('🎉 '+chData.rewardMsg,player.x-180,player.y-110,'#ffff00');
     addMsg('Story','🎉 '+chData.rewardMsg,'#ffaa44');
 
+    // Chapter 3: grant Dark King Slayer title
+    if(storyChapter===3 && typeof pData!=='undefined'){
+        if(!pData.titles)pData.titles=[];
+        if(pData.titles.indexOf('Dark King Slayer')===-1) pData.titles.push('Dark King Slayer');
+        savePData();
+    }
+
     setTimeout(function(){
         if(!gameStarted)return;
         if(storyChapter<3){
-            beginStoryChapter(storyChapter+1);
-            // Show NPC hint for next chapter
             var nextData=STORY_DATA[storyChapter];
-            if(nextData)float('Talk to '+nextData.npcId+' for next chapter!',player.x-180,player.y-80,'#ffcc44');
+            if(nextData){
+                float('Talk to NPCs for next chapter!',player.x-180,player.y-80,'#ffcc44');
+                beginStoryChapter(storyChapter+1);
+            }
         } else {
             showStoryComplete();
         }
-    },3000);
+    },3500);
 }
 
 function showStoryComplete(){
@@ -1001,7 +1183,7 @@ function showStoryComplete(){
     scene.cameras.main.flash(2000,255,220,50);
     var ov=document.createElement('div');
     ov.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at center,#1a0a00 0%,#000 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;opacity:0;transition:opacity 2s;font-family:Arial,sans-serif;color:#fff;text-align:center;';
-    ov.innerHTML='<div style="max-width:580px;padding:36px;"><div style="font-size:80px;margin-bottom:12px;">🏆</div><h1 style="font-size:48px;color:#ffdd44;text-shadow:0 0 40px #ffaa00;margin-bottom:8px;">STORY COMPLETE!</h1><p style="font-size:16px;color:#ffcc88;margin-bottom:6px;">You have saved the Pixel Realm!</p><p style="font-size:18px;color:#ffaa44;margin-bottom:4px;">'+pClass.icon+' <b>'+pName+'</b> — Level '+pLv+'</p><p style="font-size:15px;color:#ff8844;margin-bottom:4px;">🐉 Title Earned: <b>Dragon Slayer</b></p><p style="font-size:22px;color:#ffdd44;margin-bottom:6px;">Score: '+score+'</p><p style="font-size:14px;color:#ffaa00;margin-bottom:24px;">💰 Total Gold: '+gold+'</p><button onclick="location.reload()" style="padding:12px 36px;font-size:16px;background:linear-gradient(135deg,#cc8800,#ffaa00);color:#000;border:none;border-radius:10px;cursor:pointer;font-weight:bold;">🏠 Return to Menu</button></div>';
+    ov.innerHTML='<div style="max-width:580px;padding:36px;"><div style="font-size:80px;margin-bottom:12px;">🏆</div><h1 style="font-size:48px;color:#ffdd44;text-shadow:0 0 40px #ffaa00;margin-bottom:8px;">STORY COMPLETE!</h1><p style="font-size:16px;color:#ffcc88;margin-bottom:6px;">You have freed the Pixel Realm from The Dark King!</p><p style="font-size:18px;color:#ffaa44;margin-bottom:4px;">'+pClass.icon+' <b>'+pName+'</b> — Level '+pLv+'</p><p style="font-size:15px;color:#ff8844;margin-bottom:4px;">👑 Title Earned: <b>Dark King Slayer</b></p><p style="font-size:22px;color:#ffdd44;margin-bottom:6px;">Score: '+score+'</p><p style="font-size:14px;color:#ffaa00;margin-bottom:24px;">💰 Total Gold: '+gold+'</p><button onclick="location.reload()" style="padding:12px 36px;font-size:16px;background:linear-gradient(135deg,#cc8800,#ffaa00);color:#000;border:none;border-radius:10px;cursor:pointer;font-weight:bold;">🏠 Return to Menu</button></div>';
     document.body.appendChild(ov);
     setTimeout(function(){ov.style.opacity='1';},100);
 }
@@ -1013,9 +1195,9 @@ function startNPCDialog(npc){
     if(chData.npcId!==npc.id){
         // Wrong NPC for this chapter — give generic line
         var genericLines={
-            elder:[{speaker:'👴 Elder Oaken',text:'"Stay safe out there, hero! The village is counting on you! 💪"'}],
-            scout:[{speaker:'🏕️ Scout Finn',text:'"I\'m scouting the perimeter. Watch your back! 🏕️"'}],
-            blacksmith:[{speaker:'⚒️ Blacksmith Bram',text:'"Come back when you\'re stronger! I have work to do. ⚒️"'}]
+            prisoner:[{speaker:'🧑 Escaped Prisoner',text:'"Stay strong! The guards are everywhere — keep fighting! ✊"'}],
+            spy:[{speaker:'🕵️ Rebel Spy',text:'"I\'m watching the hallway. Dark knights patrol in pairs — stay alert! 🕵️"'}],
+            wizard:[{speaker:'🧙 Court Mage',text:'"The Dark King\'s power grows every second. Hurry — the realm is counting on you! 🔮"'}]
         };
         var lines=genericLines[npc.id]||[{speaker:npc.id,text:'"Hello, traveller!"'}];
         showStoryDialog(lines); return;
@@ -1186,6 +1368,7 @@ function killEnemy(e){
     if(m)particles(e.x,e.y,m.color,12);S.die();
     gainXP(e.xp||20);score+=(e.score||10)*pLv;if(scoreTxt)scoreTxt.setText('Score: '+score);
     earnGold(e.gold||5);
+    addPassXP(15);
     if(selectedMode!=='pvp')spawnPotion(e.x,e.y,false);
     var mt=e.mtype||'goblin';
     if(!questStats.kills[mt])questStats.kills[mt]=0;questStats.kills[mt]++;
@@ -1196,24 +1379,49 @@ function killEnemy(e){
         else updateStoryObj('kill',mt);
     }
     if(e.hpBar)e.hpBar.destroy();if(e.tag)e.tag.destroy();
-    var ws=(e.pool===POOL_SHADOW),pool2=e.pool;e.destroy();
+    e.destroy();
     if(selectedMode==='survival'){onWaveKill();return;}
     setTimeout(function(){
         if(!gameStarted)return;
-        if(selectedMode==='adventure')spawnEnemy(null,ws?POOL_SHADOW:POOL_ADV);
+        if(selectedMode==='adventure')spawnEnemy(null,POOL_ADV);
         else if(selectedMode==='bossrush')spawnEnemy(null,POOL_BRS);
-        else if(selectedMode==='story')spawnEnemy(null,ws?POOL_SHADOW:POOL_ADV);
+        else if(selectedMode==='story')spawnEnemy(null,curPool);
     },4000);
 }
 
 // ================================
 // BOSS
 // ================================
+function spawnStoryBoss(key){
+    if(bossSpawned)return;
+    bossSpawned=true;
+    var bd;
+    if(key==='vex')          bd=BOSS_VEX;
+    else if(key==='shadowmaster') bd=BOSS_SHADOW_MASTER;
+    else if(key==='darkking')     bd=BOSS_DARK_KING;
+    else return;
+    S.boss();
+    makeBossTex('storyBoss',bd);
+    // Spawn boss near center of current chapter's area
+    var spawnY=storyChapter===2?(11*tSz):(storyChapter===3?(6*tSz):(18*tSz));
+    boss=scene.physics.add.image(mW/2*tSz,spawnY,'storyBoss');
+    boss.setCollideWorldBounds(true);
+    boss.hp=bd.hp+pLv*80;boss.maxHp=boss.hp;boss.speed=bd.speed+pLv*5;boss.xp=bd.xp+pLv*50;boss.gold=bd.gold||180;
+    scene.tweens.add({targets:boss,scaleX:1.12,scaleY:1.12,duration:650,yoyo:true,repeat:-1});
+    if(bossHPBg)bossHPBg.destroy();if(bossHPBar)bossHPBar.destroy();if(bossTxt)bossTxt.destroy();
+    bossHPBg=scene.add.rectangle(640,50,504,28,0x000000).setScrollFactor(0).setDepth(15);
+    bossHPBar=scene.add.rectangle(640,50,500,24,bd.bar).setScrollFactor(0).setDepth(15);
+    bossTxt=scene.add.text(640,50,bd.name,{fontSize:'14px',fill:'#fff'}).setOrigin(0.5).setScrollFactor(0).setDepth(15);
+    if(player)float('⚠️ '+bd.name+'!',player.x-130,player.y-100,'#ff4444');
+    addMsg('System','⚠️ '+bd.name+' appears!','#ff4444');
+    scene.physics.add.overlap(player,boss,onBossHit,null,scene);
+}
 function spawnBoss(mode){
-    if(bossSpawned)return;bossSpawned=true;S.boss();
+    if(bossSpawned)return;
+    // Story mode — uses spawnStoryBoss via updateStoryObj triggers
+    if(storyMode)return;
+    bossSpawned=true;S.boss();
     var bd=mode==='srv'?BOSS_SRV:BOSS_ADV;
-    // Story ch2: use Shadow Wraith instead
-    if(storyMode&&storyChapter===2) bd=BOSS_RUSH[0];
     makeBossTex('modeBoss',bd);
     var x=mW/2*tSz,y=mH/2*tSz;
     boss=scene.physics.add.image(x,y,'modeBoss');
@@ -1238,19 +1446,35 @@ function onBossHit(p,b){
     if(pH<=0){pH=0;updateHP();showGameOver();}
 }
 function killBoss(){
+    var wasShadowMaster=(storyMode&&storyChapter===3&&storyBossPhase===1);
     particles(boss.x,boss.y,0xff0000,30);particles(boss.x,boss.y,0xffff00,22);
     gainXP(boss.xp||400);score+=600*pLv;if(scoreTxt)scoreTxt.setText('Score: '+score);
     earnGold(boss.gold||150);
+    addPassXP(100);
     for(var i=0;i<4;i++)spawnPotion(boss.x+Phaser.Math.Between(-80,80),boss.y+Phaser.Math.Between(-80,80),true);
     if(bossHPBg)bossHPBg.destroy();if(bossHPBar)bossHPBar.destroy();if(bossTxt)bossTxt.destroy();
     boss.destroy();boss=null;bossSpawned=false;
     questStats.bossKills++;checkQ('boss',{});
-    float('🏆 BOSS DEFEATED!',player.x-120,player.y-90,'#ffff00');
-    addMsg('System','🏆 Boss defeated!','#ffff00');
-    // Story
-    if(storyMode) updateStoryObj('boss','boss');
-    if(selectedMode==='bossrush')setTimeout(function(){if(gameStarted)nextRush();},3000);
-    else if(!storyMode) scene.time.addEvent({delay:180000,callback:function(){if(gameStarted)spawnBoss(selectedMode==='survival'?'srv':'adv');}});
+
+    if(wasShadowMaster){
+        // Phase 1 → 2: Shadow Master down, Dark King spawns
+        float('💀 Shadow Master falls!',player.x-120,player.y-90,'#aa44ff');
+        addMsg('System','💀 Shadow Master defeated! The Dark King rises!','#ff8844');
+        updateStoryObj('story_boss_kill','shadowmaster');
+        storyBossPhase=0;
+        showStoryCutscene('The Shadow Master dissolves into darkness...\n\nA terrible laugh echoes through the throne room — THE DARK KING RISES!','#ff8844');
+        setTimeout(function(){
+            if(!gameStarted)return;
+            storyBossPhase=2;
+            spawnStoryBoss('darkking');
+        },4200);
+    } else {
+        float('🏆 BOSS DEFEATED!',player.x-120,player.y-90,'#ffff00');
+        addMsg('System','🏆 Boss defeated!','#ffff00');
+        if(storyMode) updateStoryObj('boss','boss');
+        if(selectedMode==='bossrush') setTimeout(function(){if(gameStarted)nextRush();},3000);
+        else if(!storyMode) scene.time.addEvent({delay:180000,callback:function(){if(gameStarted)spawnBoss(selectedMode==='survival'?'srv':'adv');}});
+    }
 }
 function updateBossHP(){
     if(!boss||!bossHPBar)return;
@@ -1600,7 +1824,7 @@ function updateMinimap(){
             ctx.fillStyle='#ffcc44';ctx.fillRect(npc.x*sx-3,npc.y*sy-3,6,6);
         });
     }
-    if(selectedMode==='adventure'||selectedMode==='story'){
+    if(selectedMode==='adventure'){
         if(!inShadow){ctx.fillStyle='#aa00ff';ctx.fillRect(22*tSz*sx-3,22*tSz*sy-3,6,6);}
         else{ctx.fillStyle='#ffaa00';ctx.fillRect(4*tSz*sx-3,4*tSz*sy-3,6,6);}
     }
@@ -1646,7 +1870,7 @@ function showGameOver(){
             function restart(){
                 ov.style.opacity='0';setTimeout(function(){if(ov.parentNode)document.body.removeChild(ov);},1000);
                 pH=100;pMaxH=100;pXP=0;pLv=1;pSpd=200;pDmg=20;xpNext=100;score=0;
-                inv=[];bossSpawned=false;dim=0;survTimer=0;minions=[];wolfPets=[];berserking=false;invisible=false;inShadow=false;wave=0;rushIdx=0;normalTiles=[];shadowTiles=[];tombs=[];storyNPCList=[];storyObjProgress=[];storyChapter=0;storyDone=false;storyLairTriggered=false;storyShadowKills=0;
+                inv=[];bossSpawned=false;dim=0;survTimer=0;minions=[];wolfPets=[];berserking=false;invisible=false;inShadow=false;wave=0;rushIdx=0;normalTiles=[];shadowTiles=[];tombs=[];storyNPCList=[];storyObjProgress=[];storyChapter=0;storyDone=false;storyLairTriggered=false;storyShadowKills=0;storyBossPhase=0;
                 gameStarted=false;window.gameStarted=false;
                 localStorage.removeItem('rpgSave');
                 scene.cameras.main.fadeIn(100);scene.scene.restart();
