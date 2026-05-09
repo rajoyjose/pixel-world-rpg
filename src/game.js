@@ -1651,8 +1651,10 @@ function showGameOver(){
                 localStorage.removeItem('rpgSave');
                 scene.cameras.main.fadeIn(100);scene.scene.restart();
                 setTimeout(function(){
+                    // Hide ALL screens first (including loginScreen), then show mainMenu
                     document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
                     var mm=document.getElementById('mainMenu');if(mm)mm.classList.add('active');
+                    var ls=document.getElementById('loginScreen');if(ls)ls.classList.remove('active');
                     hide('storyPanel');hide('storyDialog');
                 },500);
             }
